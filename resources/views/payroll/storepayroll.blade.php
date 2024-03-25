@@ -185,7 +185,7 @@ th{
                                     <div class="label-square bg-danger"></div>
                                     <div class="label-text mr-2">NO DTR & No Voucher</div>
                                     <div class="label-square bg-info"></div>
-                                    <div class="label-text mr-2">With DTR & With Voucher</div>
+                                    <div class="label-text mr-2">With DTR & With Vouchers</div>
                                 </div><br>
                                 <br>
                                 <table id="example1" class="table table-bordered table-hover table-pay">
