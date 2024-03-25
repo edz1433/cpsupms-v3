@@ -158,7 +158,18 @@ th{
                 <div class="card-body">
                     <div class="row">
                         <div class="col-9">
-
+                            <div class="custom-legend float-first"><br><br>
+                                <div class="label-square bg-success"></div>
+                                <div class="label-text mr-2">Complete within 1-15</div>
+                                <div class="label-square bg-warning"></div>
+                                <div class="label-text mr-2">Complete within 1-31</div>
+                                <div class="label-square bg-primary"></div>
+                                <div class="label-text mr-2">Complete after 1-31</div>
+                                <div class="label-square bg-danger"></div>
+                                <div class="label-text mr-2">NO DTR & No Voucher</div>
+                                <div class="label-square bg-info"></div>
+                                <div class="label-text mr-2">With DTR & With Vouchers</div>
+                            </div>
                         </div>
                         <div class="col-3">
                             <div class="input-group">
@@ -175,18 +186,6 @@ th{
                         </div>                                        
                         
                         <div class="col-12">
-                                <div class="custom-legend float-first"><br><br>
-                                    <div class="label-square bg-success"></div>
-                                    <div class="label-text mr-2">Complete within 1-15</div>
-                                    <div class="label-square bg-warning"></div>
-                                    <div class="label-text mr-2">Complete within 1-31</div>
-                                    <div class="label-square bg-primary"></div>
-                                    <div class="label-text mr-2">Complete after 1-31</div>
-                                    <div class="label-square bg-danger"></div>
-                                    <div class="label-text mr-2">NO DTR & No Voucher</div>
-                                    <div class="label-square bg-info"></div>
-                                    <div class="label-text mr-2">With DTR & With Vouchers</div>
-                                </div><br>
                                 <br>
                                 <table id="example1" class="table table-bordered table-hover table-pay">
                                     <thead>
