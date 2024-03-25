@@ -36,6 +36,33 @@ border: 1px solid #ddd; /* Add a border around the cells */
 th{
     font-size: 12px;
 }
+
+.custom-legend {
+      display: flex;
+      align-items: center;
+    }
+
+    .label-square {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background-color: #28a745;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+
+    .label-text {
+      font-size: 16px;
+    }
+
+    .warning-label {
+      color: #856404;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 0.25rem;
+      padding: 0.25em 0.5em;
+    }
+
 </style>
 <div class="container-fluid">
     <div class="row" style="padding-top: 100px;">
@@ -148,8 +175,18 @@ th{
                         </div>                                        
                         
                         <div class="col-12">
-                            <div class="table-responsive" style="overflow-y: auto;
-                                overflow-x: auto; ">
+                                <div class="custom-legend float-first"><br><br>
+                                    <div class="label-square bg-success"></div>
+                                    <div class="label-text mr-2">Complete within 1-15</div>
+                                    <div class="label-square bg-warning"></div>
+                                    <div class="label-text mr-2">Complete within 1-31</div>
+                                    <div class="label-square bg-primary"></div>
+                                    <div class="label-text mr-2">Complete after 1-31</div>
+                                    <div class="label-square bg-danger"></div>
+                                    <div class="label-text mr-2">NO DTR & No Voucher</div>
+                                    <div class="label-square bg-info"></div>
+                                    <div class="label-text mr-2">With DTR & With Voucher</div>
+                                </div><br>
                                 <br>
                                 <table id="example1" class="table table-bordered table-hover table-pay">
                                     <thead>
