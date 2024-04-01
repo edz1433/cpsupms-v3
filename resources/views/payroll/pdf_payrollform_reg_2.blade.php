@@ -592,23 +592,35 @@
                                     stripos($item->label, 'prom') === false &&
                                     stripos($item->label, 'Prom') === false &&
                                     stripos($item->label, 'Nbc') === false &&
-                                    stripos($item->label, 'nbc') === false)
+                                    stripos($item->label, 'nbc') === false &&
+                                    stripos($item->label, 'Jan') === false &&
+                                    stripos($item->label, 'Feb') === false &&
+                                    stripos($item->label, 'Mar') === false &&
+                                    stripos($item->label, 'Apr') === false &&
+                                    stripos($item->label, 'May') === false &&
+                                    stripos($item->label, 'Jun') === false &&
+                                    stripos($item->label, 'July') === false &&
+                                    stripos($item->label, 'Aug') === false &&
+                                    stripos($item->label, 'Sep') === false &&
+                                    stripos($item->label, 'Oct') === false &&
+                                    stripos($item->label, 'Nov') === false &&
+                                    stripos($item->label, 'Dec') === false )
 
-    @if (collect(['phil', 'health'])->contains(function ($keyword) use ($item) {
-      return stripos($item->label, $keyword) !== false;
-    }))
-      {{ $code->ph_code }} {{ $item->label }}<br>
-    @elseif (collect(['eml', 'policy', 'Consol', 'educ', 'asst', 'mpl loan', 'rlip', 'dfal', 'computer', 'help'])->contains(function ($keyword) use ($item) {
-      return strpos(strtolower($item->label), $keyword) !== false;
-    }))
-      {{ $code->gsis_code }} {{ $item->label }}<br>
-    @elseif (collect(['pagibig mpl', 'prem', 'clamity', 'mp2', 'housing'])->contains(function ($keyword) use ($item) {
-      return strpos(strtolower($item->label), $keyword) !== false;
-    }))
-      {{ $code->pagibig_code }} {{ $item->label }}<br>
-    @else
-      {{ $code->otherpayable_code }} Other payable ({{ $item->label }})<br>
-    @endif
+                                    @if (collect(['phil', 'health'])->contains(function ($keyword) use ($item) {
+                                      return stripos($item->label, $keyword) !== false;
+                                    }))
+                                      {{ $code->ph_code }} {{ $item->label }}<br>
+                                    @elseif (collect(['eml', 'policy', 'Consol', 'educ', 'asst', 'mpl loan', 'rlip', 'dfal', 'computer', 'help'])->contains(function ($keyword) use ($item) {
+                                      return strpos(strtolower($item->label), $keyword) !== false;
+                                    }))
+                                      {{ $code->gsis_code }} {{ $item->label }}<br>
+                                    @elseif (collect(['pagibig mpl', 'prem', 'clamity', 'mp2', 'housing'])->contains(function ($keyword) use ($item) {
+                                      return strpos(strtolower($item->label), $keyword) !== false;
+                                    }))
+                                      {{ $code->pagibig_code }} {{ $item->label }}<br>
+                                    @else
+                                      {{ $code->otherpayable_code }} Other payable ({{ $item->label }})<br>
+                                    @endif
 
 
                                 
@@ -624,38 +636,26 @@
                         <br><div><strong>DEBIT</strong></div><br>
                         @php
                             $groupedDataFilter = $modify1->where('action', 'Refund')->filter(function($item) {
-                                return (stripos($item->label, 'Step') !== false ||
-                                        stripos($item->label, 'Diff') !== false ||
-                                        stripos($item->label, 'prom') !== false ||
-                                        stripos($item->label, 'Prom') !== false ||
-                                        stripos($item->label, 'Nbc') !== false ||
-                                        stripos($item->label, 'nbc') !== false);
+                                return !preg_match('/Step|Diff|prom|Prom|Nbc|nbc|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/i', $item->label);
                             });
                         
                             $sumFilterDeb = $groupedDataFilter->sum('amount');
+                            $totalAddDebit = round($totalsaldiff + $totalnbcdiff + $totalstepencre, 2);
                         @endphp
-                        @php $totalAddDebit = round($totalsaldiff + $totalnbcdiff + $totalstepencre, 2) @endphp
-                        {{ number_format($sumFilterDeb + $totalAddDebit, 2 ) }} <br>
-                    
+                        
+                        {{ number_format($sumFilterDeb + $totalAddDebit, 2) }}<br>
+                        
                         @foreach($groupedData as $group => $items)
                             @php $sum = 0; $displayTotal = true; @endphp
                             @foreach($items as $item)
-                                @if($item->action == "Refund")
-                                @if(stripos($item->label, 'Step') === false &&
-                                    stripos($item->label, 'Diff') === false &&
-                                    stripos($item->label, 'prom') === false &&
-                                    stripos($item->label, 'Prom') === false &&
-                                    stripos($item->label, 'Nbc') === false &&
-                                    stripos($item->label, 'nbc') === false)
+                                @if($item->action == "Refund" && 
+                                    !preg_match('/Step|Diff|prom|Prom|Nbc|nbc|Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sep|Oct|Nov|Dec/', $item->label))
                                     @php $sum += $item->amount; @endphp
                                 @else
                                     @php $displayTotal = false; @endphp
                                 @endif
-                                @endif
                             @endforeach
-                            @if($displayTotal)
-                              {{ number_format($sum, 2) }}<br>
-                            @endif
+                            {{ $displayTotal ? number_format($sum, 2) : '' }}<br>
                         @endforeach
                         {{ number_format((array_sum($grandearn_for_the_period)) - (array_sum($grandtotalabsences)) - ($totalAddDebit),2) }}<br>
                     </td>    
@@ -663,39 +663,27 @@
                         <br><div><strong>CREDIT</strong></div><br>
                         @php
                             $groupedDataFilter = $modify1->where('action', 'Deduction')->filter(function($item) {
-                                return (stripos($item->label, 'step') !== false ||
-                                        stripos($item->label, 'Diff') !== false ||
-                                        stripos($item->label, 'prom') !== false ||
-                                        stripos($item->label, 'Prom') !== false ||
-                                        stripos($item->label, 'Nbc') !== false ||
-                                        stripos($item->label, 'nbc') !== false);
+                                return !preg_match('/step|Diff|prom|Prom|Nbc|nbc|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/i', $item->label);
                             });
                         
                             $sumFilterCred = $groupedDataFilter->sum('amount');
                         @endphp
                         
-                        {{ number_format($sumFilterCred, 2) }} <br>
+                        {{ number_format($sumFilterCred, 2) }}<br>
 
                         @foreach($groupedData as $group => $items)
-                        @php $sum = 0; $displayTotal = true; @endphp
-                            @foreach($items as $item)
-                                @if($item->action == "Deduction")
-                                @if(stripos($item->label, 'Step') === false &&
-                                    stripos($item->label, 'Diff') === false &&
-                                    stripos($item->label, 'prom') === false &&
-                                    stripos($item->label, 'Prom') === false &&
-                                    stripos($item->label, 'Nbc') === false &&
-                                    stripos($item->label, 'nbc') === false)
-                                    @php $sum += $item->amount; @endphp
-                                @else
-                                    @php $displayTotal = false; @endphp
-                                @endif
-                                @endif
-                            @endforeach
-                            @if($displayTotal)
-                              {{ number_format($sum, 2) }}<br>
+                          @php $sum = 0; $displayTotal = true; @endphp
+                          @foreach($items as $item)
+                            @if($item->action == "Deduction" && 
+                                !preg_match('/Step|Diff|prom|Prom|Nbc|nbc|Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sep|Oct|Nov|Dec/', $item->label))
+                                @php $sum += $item->amount; @endphp
+                            @else
+                                @php $displayTotal = false; @endphp
                             @endif
+                          @endforeach
+                          {{ $displayTotal ? number_format($sum, 2) : '' }}<br>
                         @endforeach
+                      
 
                         {{ number_format((array_sum($grandearn_for_the_period) + ($totalSumRef) - ($totalSumDed)),2) }}
                     </td>
