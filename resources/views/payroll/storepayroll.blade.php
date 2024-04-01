@@ -38,31 +38,30 @@ th{
 }
 
 .custom-legend {
-      display: flex;
-      align-items: center;
-    }
+display: flex;
+align-items: center;
+}
 
-    .label-square {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      background-color: #28a745;
-      margin-right: 10px;
-      border-radius: 4px;
-    }
+.label-square {
+display: inline-block;
+width: 20px;
+height: 20px;
+background-color: #28a745;
+margin-right: 10px;
+border-radius: 4px;
+}
 
-    .label-text {
-      font-size: 16px;
-    }
+.label-text {
+font-size: 16px;
+}
 
-    .warning-label {
-      color: #856404;
-      background-color: #fff3cd;
-      border: 1px solid #ffeeba;
-      border-radius: 0.25rem;
-      padding: 0.25em 0.5em;
-    }
-
+.warning-label {
+color: #856404;
+background-color: #fff3cd;
+border: 1px solid #ffeeba;
+border-radius: 0.25rem;
+padding: 0.25em 0.5em;
+}
 </style>
 <div class="container-fluid">
     <div class="row" style="padding-top: 100px;">
@@ -158,34 +157,28 @@ th{
                 <div class="card-body">
                     <div class="row">
                         <div class="col-9">
-                            <div class="custom-legend float-first"><br><br>
-                                <div class="label-square bg-success"></div>
-                                <div class="label-text mr-2">Complete within 1-15</div>
-                                <div class="label-square bg-warning"></div>
-                                <div class="label-text mr-2">Complete within 1-31</div>
-                                <div class="label-square bg-primary"></div>
-                                <div class="label-text mr-2">Complete after 1-31</div>
-                                <div class="label-square bg-danger"></div>
-                                <div class="label-text mr-2">NO DTR & No Voucher</div>
-                                <div class="label-square bg-info"></div>
-                                <div class="label-text mr-2">With DTR & With Vouchers</div>
-                            </div>
                         </div>
-                        <div class="col-3">
-                            <div class="input-group">
-                                <select class="form-control select2" name="offid" onchange="navigateToPage(this.value)" required>
-                                    <option value="All">All</option>
-                                    @foreach($office as $off)
-                                        <option value="{{ $off->id }}" @if($off->id == $offID) selected @endif>{{ $off->office_name }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="input-group-append">
-                                    <span class="input-group-text"><i class="fas fa-filter"></i></span>
+                        <div class="col-3 ">
+                            <div class="row">
+                                <div class="col-3 text-right">
+                                    <button href="" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-legend"><i class="fas fa-eye fa-sm"></i> Legend</button>
+                                </div>                                
+                                <div class="col-9">
+                                    <div class="input-group">
+                                        <select class="form-control select2" name="offid" onchange="navigateToPage(this.value)" required>
+                                            <option value="All">All</option>
+                                            @foreach($office as $off)
+                                                <option value="{{ $off->id }}" @if($off->id == $offID) selected @endif>{{ $off->office_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>      
+                            </div>
                         </div>                                        
                         
                         <div class="col-12">
+                            <div class="table-responsive" style="overflow-y: auto;
+                                overflow-x: auto; ">
                                 <br>
                                 <table id="example1" class="table table-bordered table-hover table-pay">
                                     <thead>
@@ -258,7 +251,7 @@ th{
                                             <tr id="tr-data" class="tr-data tr-{{ $p->pid }}">
                                                 <td>{{ $no++ }}</td>
                                                 <td>{{ $p->emp_ID }}</td>
-                                                <td>{{ $p->lname }} {{ $p->fname }} {{ $p->mname }}</td>
+                                                <td>{{ ucwords(mb_strtolower($p->lname)) }} {{ ucwords(mb_strtolower($p->fname)) }} {{ ucwords(mb_strtolower($p->mname)) }}</td>
                                                 <td>{{ $p->office_abbr }}</td>
                                                 <td>{{ $p->position }}</td>
                                                 <td>{{ number_format($p->salary_rate, 2) }}</td>
@@ -282,21 +275,27 @@ th{
                                                 </td> --}}
                                                 <td>
                                                     <div class="btn-group">
-                                                        <button type="button" style="height:32px; width: 140px;" class="btn btn-{{$pstatus == 1 ? 'success' : '' }}{{$pstatus == 2 ? 'warning' : '' }}{{$pstatus == 3 && $p->voucher != 1 ? 'danger' : '' }}{{$pstatus == 3 && $p->voucher == 1 ? 'info' : '' }} dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                        <button type="button" style="height:32px; width: 140px;" class="btn btn-{{ $p->voucher != 2
+                                                            ? ($pstatus == 1 ? 'success' : ($pstatus == 2 ? 'warning' : ($pstatus == 3 && $p->voucher != 1 ? 'danger' : ($pstatus == 3 && $p->voucher == 1 ? 'info' : ''))))
+                                                            : 'primary' }} dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                            {{$p->voucher == 2  ? 'Complete' : '' }}
+                                                            @if($p->voucher != 2)
                                                             {{$pstatus == 1 ? 'Complete' : '' }}
                                                             {{$pstatus == 2 ? 'Complete' : '' }}
-                                                            {{$pstatus == 3 && $p->voucher != 1 ? 'NO DTR' : '' }}
-                                                            @if ($p->status == 3 && $p->voucher == 1)
-                                                                <div style="color:white; margin-top: -6px; font-size: 11px;">NO DTR</div>
-                                                                <div style="color:white; margin-left: 28px; font-size: 11px; height: 14px; width: 60px; margin-top: -5px; color: white; border-radius: 5px;">(complied)</div>
+                                                            {{$pstatus == 3 && $p->voucher != 1 ? 'Incomplete' : '' }}
+                                                                @if ($p->status == 3 && $p->voucher == 1)
+                                                                    <div style="color:white; margin-top: -6px; font-size: 11px;">Incomplete</div>
+                                                                    <div style="color:white; margin-left: 28px; font-size: 11px; height: 14px; width: 60px; margin-top: -5px; color: white; border-radius: 5px;">(complied)</div>
+                                                                @endif
                                                             @endif
                                                         </button>                                          
                                                         <div class="dropdown-menu" x-out-of-boundaries="" style="">
                                                             <a href="{{ route('statUpdate', ['id' => $p->pid, 'val' => '1']) }}" class="dropdown-item bg-success p-2 mt-1">Complete </a>
-                                                            <a href="{{ route('statUpdate', ['id' => $p->pid, 'val' => '2']) }}" class="dropdown-item bg-warning p-2 mt-1">Complete 2</a>
-                                                            <a href="{{ route('statUpdate', ['id' => $p->pid, 'val' => '3']) }}" class="dropdown-item bg-danger p-2 mt-1">NO DTR</a>
+                                                            <a href="{{ route('statUpdate', ['id' => $p->pid, 'val' => '2']) }}" class="dropdown-item bg-warning p-2 mt-1">Complete</a>
+                                                            <a href="{{ route('statUpdate', ['id' => $p->pid, 'val' => $pstatus]) }}?v=2" class="dropdown-item bg-primary p-2 mt-1">Complete</a>
+                                                            <a href="{{ route('statUpdate', ['id' => $p->pid, 'val' => '3']) }}" class="dropdown-item bg-danger p-2 mt-1">Incomplete</a>
                                                         </div>                                                        
-                                                    </div> 
+                                                    </div>  
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="btn-group">

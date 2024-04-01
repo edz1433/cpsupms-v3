@@ -585,7 +585,6 @@ class PayrollController extends Controller
             ->where('payroll_files.stat_ID', $statID)
             ->where('payroll_files.startDate', $dateStart)
             ->where('payroll_files.endDate', $dateEnd)
-            ->where('payroll_files.endDate', $dateEnd)
             ->where(function($query) use ($cond, $office, $statID){
                 if($statID == 1){
                     // $query->orderBy('of.orders');
@@ -637,6 +636,7 @@ class PayrollController extends Controller
                         DB::raw('SUM(CASE WHEN action = "Refund" AND `column` = "column5" THEN amount ELSE 0 END) as column5sumRef'),
                         DB::raw('SUM(CASE WHEN action = "Refund" AND `column` = "column6" THEN amount ELSE 0 END) as column6sumRef'),
                         DB::raw('SUM(CASE WHEN action = "Refund" AND `column` = "column7" THEN amount ELSE 0 END) as column7sumRef'),
+                        
                         // ... Repeat for other columns
                         DB::raw('SUM(CASE WHEN action = "Deduction" AND `column` = "column1" THEN amount ELSE 0 END) as column1sumDed'),
                         DB::raw('SUM(CASE WHEN action = "Deduction" AND `column` = "column2" THEN amount ELSE 0 END) as column2sumDed'),
@@ -661,7 +661,8 @@ class PayrollController extends Controller
             ->where('payroll_files.startDate', $dateStart)
             ->where('payroll_files.endDate', $dateEnd)
             ->where('payroll_files.endDate', $dateEnd)
-            ->where('payroll_files.status', '!=', 3)
+            ->where('payroll_files.voucher', null)
+            ->whereNotIn('payroll_files.status', [3, 4])
             ->where(function($query) use ($cond, $office, $statID){
                 if($statID == 1){
                     // $query->orderBy('of.orders');
@@ -728,7 +729,7 @@ class PayrollController extends Controller
             ->where('payroll_files.startDate', $dateStart)
             ->where('payroll_files.endDate', $dateEnd)
             ->where('payroll_files.endDate', $dateEnd)
-            ->where('payroll_files.status', '!=', 3)
+            ->whereNotIn('payroll_files.status', [3, 4])
             ->where(function($query) use ($cond, $office, $statID){
                 if($statID == 1){
                     // $query->orderBy('of.orders');
@@ -960,11 +961,12 @@ class PayrollController extends Controller
     }
     
 
-    public function statUpdate($id, $val){
+    public function statUpdate(Request $request, $id, $val){
+        $vocuher = isset($request->v) ? $request->v : null;
         $pfile = [
             'status' => $val,
             'sal_type' => ($val == 1) ? 1 : 3, 
-            'Voucher' => null,
+            'voucher' => $vocuher,
         ];
 
         if($val !== 3){

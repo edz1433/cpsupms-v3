@@ -1,6 +1,93 @@
 @php
     $current_route=request()->route()->getName();
 @endphp
+<style>
+    .modal-xl-plus {
+        max-width: 80%;
+    }
+</style>
+
+<div class="modal fade" id="modal-legend">
+    <div class="modal-dialog modal-xl-plus">
+        <div class="modal-content">
+            
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="position-relative p-3 bg-gray" style="height: 180px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div class="ribbon-wrapper ribbon-lg">
+                                <div class="ribbon bg-success text-lg">
+                                    Complete
+                                </div>
+                            </div>
+                            <h5 style="margin-bottom: 10px; font-weight: bold; color: #fff;"></h5>
+                            <p class="text-light text-justify" style="width: 85%; color: #ddd; font-size: 16px;">
+                                Employee receives their salary twice a month, with the first payment covering the period from the 1st to the 15th and the second payment covering the period from the 16th to the end of the month.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-4">
+                        <div class="position-relative p-3 bg-gray" style="height: 180px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div class="ribbon-wrapper ribbon-lg">
+                                <div class="ribbon bg-warning text-lg">
+                                    Complete
+                                </div>
+                            </div>
+                            <h5 style="margin-bottom: 10px; font-weight: bold; color: #fff;"></h5>
+                            <p class="text-light text-justify" style="width: 85%; color: #ddd; font-size: 16px;">
+                                Employee receives their salary for the whole month at once, typically on the 16th of the month due to completing the requirements for the period from 1st to 15th, which were processed late, with the payroll for that period already submitted.
+                            </p>
+                        </div>
+                    </div>
+                                        
+                    <div class="col-sm-4">
+                        <div class="position-relative p-3 bg-gray" style="height: 180px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div class="ribbon-wrapper ribbon-lg">
+                                <div class="ribbon bg-primary text-lg">
+                                    Complete
+                                </div>
+                            </div>
+                            <h5 style="margin-bottom: 10px; font-weight: bold; color: #caafaf;"></h5>
+                            <p class="text-light text-justify" style="width: 85%; color: #ddd; font-size: 16px;">
+                                Employee has complied with their requirements, but due to the delay in processing, and payroll already submitted, their salary for this period will be received next month.
+                            </p>
+                        </div>
+                    </div>   
+
+                    <div class="col-sm-8 mt-3">
+                        <div class="position-relative p-3 bg-gray" style="height: 180px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div class="ribbon-wrapper ribbon-lg">
+                                <div class="ribbon bg-danger text-lg">
+                                    Incomplete
+                                </div>
+                            </div>
+                            <h5 style="margin-bottom: 10px; font-weight: bold; color: #fff;"></h5>
+                            <p class="text-light text-justify" style="width: 90%; color: #ddd; font-size: 16px;">
+                                Employee will not received their salary for the whole month due to incomplete requirements, including DTR. If all requirements are completed before the payroll is submitted, the payment can be added to this month's payroll. If the payroll has already been submitted and the employee has vouchers, the payment will be received in this month's payroll. However, if the payroll has been submitted and the employee does not have vouchers, the payment will be received in the next month's payroll.
+                            </p>
+                        </div>
+                    </div>
+                 
+
+                    <div class="col-sm-4 mt-3">
+                        <div class="position-relative p-3 bg-gray" style="height: 180px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div class="ribbon-wrapper ribbon-lg">
+                                <div class="ribbon bg-info text-lg">
+                                    Complete
+                                </div>
+                            </div>
+                            <h5 style="margin-bottom: 10px; font-weight: bold; color: #fff;"></h5>
+                            <p class="text-light text-justify" style="width: 85%; color: #ddd; font-size: 16px;">
+                                Employee has completed their requirements, but due to the delay in processing, the payroll has already been submitted. Therefore, their salary for this period will be received from the 16th to the 31st of the month, as they have vouchers.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @if($current_route == "viewPayroll")
 <div class="modal fade" id="modal-addpayroll">
     <div class="modal-dialog modal-md">
@@ -152,6 +239,7 @@
     </div>
 </div>
 @endif
+
 @if($current_route == "storepayroll" || $current_route == "storepayroll-jo" || $current_route == "storepayroll-partime-jo" || $current_route == "storepayroll-partime")
 <style>
     .btn-group-toggle .btn {
@@ -347,6 +435,11 @@
                                         </span>
                                     </div>
                                     <input class="form-control form-control-sm"  type="text" name="amount" id="amount" readonly>
+                                    <div class="input-group-prepend ">
+                                        <button type="button" id="divide" onclick="incomStatdivide()" class="input-group-text bg-info">
+                                            <i class="far">÷</i>
+                                        </button>
+                                    </div>
                                     <input class="form-control form-control-sm"  type="text" name="amount_txt" id="amount_txt" hidden>
                                 </div>    
                             </div>

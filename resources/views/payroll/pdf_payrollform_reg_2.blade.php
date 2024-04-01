@@ -593,7 +593,25 @@
                                     stripos($item->label, 'Prom') === false &&
                                     stripos($item->label, 'Nbc') === false &&
                                     stripos($item->label, 'nbc') === false)
-                                  {{ $code->otherpayable_code }} {{ $item->label }}<br>
+
+    @if (collect(['phil', 'health'])->contains(function ($keyword) use ($item) {
+      return stripos($item->label, $keyword) !== false;
+    }))
+      {{ $code->ph_code }} {{ $item->label }}<br>
+    @elseif (collect(['eml', 'policy', 'Consol', 'educ', 'asst', 'mpl loan', 'rlip', 'dfal', 'computer', 'help'])->contains(function ($keyword) use ($item) {
+      return strpos(strtolower($item->label), $keyword) !== false;
+    }))
+      {{ $code->gsis_code }} {{ $item->label }}<br>
+    @elseif (collect(['pagibig mpl', 'prem', 'clamity', 'mp2', 'housing'])->contains(function ($keyword) use ($item) {
+      return strpos(strtolower($item->label), $keyword) !== false;
+    }))
+      {{ $code->pagibig_code }} {{ $item->label }}<br>
+    @else
+      {{ $code->otherpayable_code }} Other payable ({{ $item->label }})<br>
+    @endif
+
+
+                                
                                   @php $first = false; @endphp
                               @endif
                           @endforeach

@@ -702,13 +702,29 @@
 function incomStat(val){
     var net = $('#net-'+val).text();
     var netxcomma = net.replace(/,/g, '');
-    var netHalf = parseFloat(netxcomma) / 2;
+    var netHalf = parseFloat(netxcomma);
     netTotal = netHalf.toFixed(2);
-    netTotalcom = netHalf.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    netTotalcom = netTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
     var words = convertToWords(netTotal);
     $('#amount').val(netTotalcom);
     $('#amount_txt').val(words);
+
+    $('#divide').prop('disabled', false);
+}
+
+function incomStatdivide(){
+    var net = $('#amount').val();
+    var netxcomma = net.replace(/,/g, '');
+    var netHalf = parseFloat(netxcomma) / 2;
+    netTotal = netHalf.toFixed(2);
+    netTotalcom = netTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    var words = convertToWords(netTotal);
+    $('#amount').val(netTotalcom);
+    $('#amount_txt').val(words);
+
+    $('#divide').prop('disabled', true);
 }
 </script>
 

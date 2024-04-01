@@ -160,9 +160,12 @@ class ImportController extends Controller
                         'payroll_id' => $payrollID,
                         'emp_id' => $empid,
                         'tax2' => '0.00',
-                        'add_sal_diff' => $deduction->add_sal_diff,
-                        'add_nbc_diff' => $deduction->add_nbc_diff,
-                        'add_step_incre' => $deduction->add_step_incre,
+                        // 'add_sal_diff' => $deduction->add_sal_diff,
+                        // 'add_nbc_diff' => $deduction->add_nbc_diff,
+                        // 'add_step_incre' => $deduction->add_step_incre,
+                        'add_sal_diff' => '0.00',
+                        'add_nbc_diff' => '0.00',
+                        'add_step_incre' => '0.00',
                         'eml' => '0.00',
                         'pol_gfal' => $deduction->pol_gfal,
                         'consol' => '0.00',
@@ -201,10 +204,10 @@ class ImportController extends Controller
                 }
 
                 $data = [
-                    ['column' => 'Column1', 'label' => 'Project', 'action' => 'Deduction', 'amount' => '0.00'],
+                    ['column' => 'Column1', 'label' => 'Philhealth', 'action' => 'Deduction', 'amount' => '0.00'],
                     ['column' => 'Column2', 'label' => 'Net MPC', 'action' => 'Deduction', 'amount' => '0.00'],
                     ['column' => 'Column3', 'label' => 'Graduate', 'action' => 'Deduction', 'amount' => '0.00'],
-                    ['column' => 'Column4', 'label' => 'Philhealth', 'action' => 'Deduction', 'amount' => '0.00'],
+                    ['column' => 'Column4', 'label' => 'Project', 'action' => 'Deduction', 'amount' => '0.00'],
                     ['column' => 'Column5', 'label' => 'Pag ibig', 'action' => 'Deduction', 'amount' => '0.00'],
                     ['column' => 'Column6', 'label' => 'GSIS', 'action' => 'Deduction', 'amount' => '0.00'],
                     ['column' => 'Column7', 'label' => 'CSB', 'action' => 'Deduction', 'amount' => '0.00'],

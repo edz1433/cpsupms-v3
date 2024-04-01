@@ -456,7 +456,7 @@
                       <div class="div-signature" style="width: 100%;"><strong>HENRY c. BOLINAS, Ph.D.</strong></div>
                       <div class="div-signature" style="width: 100%;">Chief Administartive Officer</div><br>
                       <div style="width: 100%;">CERTIFIED: Funds available in the amount of  <strong style="border-bottom: solid #232629 1px;"> &emsp;&emsp;&emsp;P 
-                        {{-- {{ number_format(($totalearnperiod + $modcoltotalrow) - ($totallate + $totalabsences),2)}} --}}
+                        {{ number_format(array_sum($grandtotalearnperiod) + $totalSumRef, 2); }}
                       </strong></span></div> <br><br>
                       <div class="div-signature" style="width: 100%;"><strong>ELFRED M. SUMONGSONG, CPA</strong></div>
                       <div class="div-signature" style="width: 100%;">Accountant III</div><br>
@@ -492,7 +492,7 @@
                     <td colspan="6">
                       <span style="width:100%; text-align: left; float: left; font-size: 10px;">
                         <strong><span style="margin-right: 63%;">Approved for Payment:</span></strong>  
-                        {{-- {{ number_format(($totalearnperiod + $modcoltotalrow) - ($totallate + $totalabsences) - $totalalldeduction,2) }} --}}
+                        {{ number_format((array_sum($grandtotalearnperiod) + $totalSumRef) - ($totalSumDed), 2); }}
                         <br><br><br>
                         <strong><span style="margin-left: 35%; margin-right: 35%;">ALADINO C. MORACA, Ph.D.</span></strong>
                         <span style="margin-left: 40%; margin-right: 35%;">SUC President II</span><br><br><br>
