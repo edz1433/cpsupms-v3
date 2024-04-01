@@ -585,45 +585,22 @@
                           @php $first = true; @endphp
                           @foreach($items as $item)
                               @if($first && 
-                                    stripos($item->label, 'Step') === false &&
-                                    stripos($item->label, 'step') === false &&
-                                    stripos($item->label, 'Diff') === false &&
-                                    stripos($item->label, 'diff') === false &&
-                                    stripos($item->label, 'prom') === false &&
-                                    stripos($item->label, 'Prom') === false &&
-                                    stripos($item->label, 'Nbc') === false &&
-                                    stripos($item->label, 'nbc') === false &&
-                                    stripos($item->label, 'Jan') === false &&
-                                    stripos($item->label, 'Feb') === false &&
-                                    stripos($item->label, 'Mar') === false &&
-                                    stripos($item->label, 'Apr') === false &&
-                                    stripos($item->label, 'May') === false &&
-                                    stripos($item->label, 'Jun') === false &&
-                                    stripos($item->label, 'July') === false &&
-                                    stripos($item->label, 'Aug') === false &&
-                                    stripos($item->label, 'Sep') === false &&
-                                    stripos($item->label, 'Oct') === false &&
-                                    stripos($item->label, 'Nov') === false &&
-                                    stripos($item->label, 'Dec') === false )
-
-                                    @if (collect(['phil', 'health'])->contains(function ($keyword) use ($item) {
-                                      return stripos($item->label, $keyword) !== false;
-                                    }))
+                                  !preg_match('/Step|Diff|prom|Prom|Nbc|nbc|Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sep|Oct|Nov|Dec/i', $item->label))
+                                  @if (collect(['phil', 'health'])->contains(function ($keyword) use ($item) {
+                                        return stripos($item->label, $keyword) !== false;
+                                      }))
                                       {{ $code->ph_code }} {{ $item->label }}<br>
-                                    @elseif (collect(['eml', 'policy', 'Consol', 'educ', 'asst', 'mpl loan', 'rlip', 'dfal', 'computer', 'help'])->contains(function ($keyword) use ($item) {
-                                      return strpos(strtolower($item->label), $keyword) !== false;
-                                    }))
+                                  @elseif (collect(['eml', 'policy', 'Consol', 'educ', 'asst', 'mpl loan', 'rlip', 'dfal', 'computer', 'help'])->contains(function ($keyword) use ($item) {
+                                        return stripos($item->label, $keyword) !== false;
+                                      }))
                                       {{ $code->gsis_code }} {{ $item->label }}<br>
-                                    @elseif (collect(['pagibig mpl', 'prem', 'clamity', 'mp2', 'housing'])->contains(function ($keyword) use ($item) {
-                                      return strpos(strtolower($item->label), $keyword) !== false;
-                                    }))
+                                  @elseif (collect(['pagibig mpl', 'prem', 'clamity', 'mp2', 'housing'])->contains(function ($keyword) use ($item) {
+                                        return stripos($item->label, $keyword) !== false;
+                                      }))
                                       {{ $code->pagibig_code }} {{ $item->label }}<br>
-                                    @else
+                                  @else
                                       {{ $code->otherpayable_code }} Other payable ({{ $item->label }})<br>
-                                    @endif
-
-
-                                
+                                  @endif
                                   @php $first = false; @endphp
                               @endif
                           @endforeach
@@ -636,15 +613,15 @@
                         <br><div><strong>DEBIT</strong></div><br>
                         @php
                             $groupedDataFilter = $modify1->where('action', 'Refund')->filter(function($item) {
-                                return !preg_match('/Step|Diff|prom|Prom|Nbc|nbc|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/i', $item->label);
+                                return preg_match('/Step|Diff|prom|Prom|Nbc|nbc|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/i', $item->label);
                             });
-                        
+                            
                             $sumFilterDeb = $groupedDataFilter->sum('amount');
-                            $totalAddDebit = round($totalsaldiff + $totalnbcdiff + $totalstepencre, 2);
                         @endphp
                         
-                        {{ number_format($sumFilterDeb + $totalAddDebit, 2) }}<br>
-                        
+                        @php $totalAddDebit = round($totalsaldiff + $totalnbcdiff + $totalstepencre, 2) @endphp
+                        {{ number_format($sumFilterDeb, 2 ) }} <br>
+                    
                         @foreach($groupedData as $group => $items)
                             @php $sum = 0; $displayTotal = true; @endphp
                             @foreach($items as $item)
@@ -657,7 +634,7 @@
                             @endforeach
                             {{ $displayTotal ? number_format($sum, 2) : '' }}<br>
                         @endforeach
-                        {{ number_format((array_sum($grandearn_for_the_period)) - (array_sum($grandtotalabsences)) - ($totalAddDebit),2) }}<br>
+                        {{ number_format((array_sum($grandearn_for_the_period)) - (array_sum($grandtotalabsences)),2) }}<br>
                     </td>    
                     <td colspan="4">
                         <br><div><strong>CREDIT</strong></div><br>
