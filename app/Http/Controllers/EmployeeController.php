@@ -18,36 +18,30 @@ class EmployeeController extends Controller
     public function emp_list()
     {
         $user = User::where('username', auth()->user()->username)->first();
-        $offices = Office::all();
-        $stat = Status::where('status_name', '!=', 'Part-time/JO')->get();
-
+        $offices = Office::where('office_name', '!=', 'UNKNOWN')->get();
+        
         if (auth()->user()->role == "Payroll Extension") {
-            $stat->whereNotIn('status_name', ['Regular', 'Part-time/JO'])->get();
+            $stat = Status::where('status_name', '!=', 'Regular')->get();
+        }else{
+            $stat = Status::all();
         }
         
-        $employee = Employee::join('offices', 'employees.emp_dept', '=', 'offices.id')
-        ->join('statuses', 'employees.emp_status', '=', 'statuses.id')
-        ->join('campuses', 'employees.camp_id', '=', 'campuses.id')
-        ->leftJoin('qualifications', 'employees.qualification', '=', 'qualifications.id')
-        ->select(
-            DB::raw('ROW_NUMBER() OVER (ORDER BY employees.id) as ids'),
-            DB::raw("CONCAT(employees.lname, ', ', employees.fname, ' ', employees.mname) AS full_name"),
-            'employees.*',
-            'offices.office_name',
-            'statuses.status_name',
-            'campuses.campus_abbr',
-            'qualifications.qualification as qual'
-        );
-    
-        if (auth()->user()->role != "Administrator" && auth()->user()->role != "Payroll Administrator") {
-            $employee->where('employees.camp_id', '=', auth()->user()->campus_id);
+        $employees = Employee::join('offices', 'employees.emp_dept', '=', 'offices.id')
+            ->join('statuses', 'employees.emp_status', '=', 'statuses.id')
+            ->join('campuses', 'employees.camp_id', '=', 'campuses.id')
+            ->leftJoin('qualifications', 'employees.qualification', '=', 'qualifications.id')
+            ->select('employees.*', 'offices.*', 'campuses.*', 'statuses.*', 'employees.id as empid');  
+            
+        if (auth()->user()->role == "Payroll Extension"){
+            $employees->where('employees.camp_id', '=', auth()->user()->campus_id);
+            $employees->where('employees.emp_status', '!=', 1);
         }
-    
-        $employee = $employee->get();
+        
+        $employees = $employees->get();
         $quali = Qualification::all();
         $camp = (auth()->user()->campus_id == 1) ? Campus::all() : Campus::where('id', auth()->user()->campus_id)->get();
     
-        return view("emp.emplist", compact('employee', 'offices', 'stat', 'quali', 'camp'));
+        return view("emp.emplist", compact('employees', 'offices', 'stat', 'quali', 'camp'));
     }
 
     public function empCreate(Request $request){

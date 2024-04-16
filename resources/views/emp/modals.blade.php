@@ -29,7 +29,7 @@
                                                 <i class="fas fa-user"></i>
                                             </span>
                                         </div>
-                                        <input type="text" name="LastName" oninput="this.value = this.value.toUpperCase()" placeholder="Enter Last Name" class="form-control" required>
+                                        <input type="text" name="LastName" oninput="this.value = this.value.toUpperCase()" placeholder="Enter Last Name" class="form-control" autocomplete="off" required>
                                     </div>
                                     <span id="error" style="color: #FF0000; font-size: 10pt;" class="form-text text-left LastName_error"></span>
                                 </div>
@@ -42,7 +42,7 @@
                                                 <i class="fas fa-user"></i>
                                             </span>
                                         </div>
-                                        <input type="text" name="FirstName" oninput="this.value = this.value.toUpperCase()" placeholder="Enter First Name" class="form-control" required>
+                                        <input type="text" name="FirstName" oninput="this.value = this.value.toUpperCase()" placeholder="Enter First Name" class="form-control" autocomplete="off" required>
                                     </div>    
                                     <span id="error" style="color: #FF0000; font-size: 10pt;" class="form-text text-left FirstName_error"></span>
                                 </div>
@@ -55,7 +55,7 @@
                                                 <i class="fas fa-user"></i>
                                             </span>
                                         </div>
-                                        <input type="text" name="MiddleName" oninput="this.value = this.value.toUpperCase()" placeholder="Enter Middle Name" class="form-control" required>
+                                        <input type="text" name="MiddleName" oninput="this.value = this.value.toUpperCase()" placeholder="Enter Middle Name" class="form-control" autocomplete="off" required>
                                     </div>
                                     <span id="error" style="color: #FF0000; font-size: 10pt;" class="form-text text-left MiddleName_error"></span>
                                 </div>
@@ -73,9 +73,9 @@
                                             </span>
                                         </div>
                                         <select class="form-control select2bs4" style="width: 90%;" name="Campus" required>
-                                            <option value=""> --- Select Here --- </option>
+                                            @if(auth()->user()->role !== "Payroll Extension") <option value=""> --- Select Here --- </option> @endif
                                             @foreach ($camp as $cp)
-                                                <option value="{{ $cp->id }}">{{ $cp->campus_name }}</option>
+                                                <option value="{{ $cp->id }}"  @if(auth()->user()->role == "Payroll Extension") selected @endif>{{ $cp->campus_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -285,7 +285,7 @@
     
                                 <div class="col-md-4">
                                     <label for="exampleInputName">Middle Name</label>
-                                    <div class="input-group">
+                                    <div class="input-group"> 
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">
                                                 <i class="fa fa-user"></i>
@@ -311,9 +311,9 @@
                                             </span>
                                         </div>
                                         <select class="form-control select2bs4 select_camp" style="width: 90%;" name="Campus" required>
-                                            <option value=""> --- Select Here --- </option>
+                                            @if(auth()->user()->role !== "Payroll Extension") <option value=""> --- Select Here --- </option> @endif
                                             @foreach ($camp as $cp)
-                                                <option value="{{ $cp->id }}">{{ $cp->campus_name }}</option>
+                                                <option value="{{ $cp->id }}" @if(auth()->user()->role == "Payroll Extension") selected @endif>{{ $cp->campus_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

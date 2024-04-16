@@ -8,12 +8,14 @@
                     <span class="ml-2">Account</span>
                 </a>
             </li>
+            @if(auth()->user()->role == "Administrator")
             <li class="nav-item mb-1">
                 <a href="{{ route('settingsPayroll') }}" class="nav-link2 {{ request()->is('setting-payroll') ? 'active' : '' }}" id="trashButton">
                     <i class="fas fa-money-check"></i>
                     <span class="ml-2">Payroll</span>
                 </a>
             </li>
+            @endif
         </ul>                     
     </div>
 </div>

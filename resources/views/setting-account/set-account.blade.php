@@ -103,9 +103,9 @@
                                                         <i class="fas fa-map-marker"></i>
                                                     </span>
                                                 </div>
-                                                <select class="form-control select2bs4" name="CampusName" @if(auth()->user()->role !== "Administrator") disabled @endif>
-                                                    <option value=""> --- Select Here --- </option>
+                                                <select class="form-control select2bs4" name="CampusName" @if(auth()->user()->role !== "Administrator") readonly @endif>
                                                     @if(auth()->user()->role == "Administrator")
+                                                    <option value=""> --- Select Here --- </option>
                                                         @foreach ($campus as $cp)
                                                             <option value="{{ $cp->id }}" @if($cp->id == $accounts->campus_id) selected @endif>{{ $cp->campus_name }}</option>
                                                         @endforeach
@@ -125,17 +125,17 @@
                                                         <i class="fas fa-info-circle"></i>
                                                     </span>
                                                 </div>
-                                                <select class="form-control select_camp" name="Role" @if(auth()->user()->role !== "Administrator") disabled @endif> 
-                                                    @if(auth()->user()->role == "Administrator") 
-                                                    <option value="Administrator" @if($accounts->role == "Administrator") selected @endif>Administrator</option>
-                                                    <option value="Payroll Administrator" @if($accounts->role == "Payroll Administrator") selected @endif>Payroll Administrator</option>
-                                                    <option value="Payroll Extension" @if($accounts->role == "Payroll Extension") selected @endif>Payroll Extension</option> 
-                                                    @elseif(auth()->user()->role !== "Administrator")
-                                                    <option value="Payroll Administrator">Payroll Administrator</option>
+                                                <select class="form-control select_camp" name="Role" @if(auth()->user()->role !== "Administrator") readonly @endif>
+                                                    @if(auth()->user()->role == "Administrator")
+                                                        <option value="Administrator" @if($accounts->role == "Administrator") selected @endif>Administrator</option>
+                                                        <option value="Payroll Administrator" @if($accounts->role == "Payroll Administrator") selected @endif>Payroll Administrator</option>
+                                                        <option value="Payroll Extension" @if($accounts->role == "Payroll Extension") selected @endif>Payroll Extension</option>
+                                                    @elseif(auth()->user()->role == "Payroll Administrator")
+                                                        <option value="Payroll Administrator" selected>Payroll Administrator</option>
                                                     @else
-                                                    <option value="Payroll Extension">Payroll Extension</option>
+                                                        <option value="Payroll Extension" selected>Payroll Extension</option>
                                                     @endif
-                                                </select>
+                                                </select>                                                
                                             </div>
                                             <span id="error" style="color: #FF0000; font-size: 10pt;" class="form-text text-left Role_error"></span>
                                         </div>

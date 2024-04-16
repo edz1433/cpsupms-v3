@@ -248,7 +248,6 @@
                     if (response.emp.emp_status == 1) {
                         $("#jo-type-s").val("0").change();
                     }
-                    console(response.emp.emp_status);
                     $("#rate").val(response.emp.emp_salary);
                     $(".select_camp").val(response.emp.camp_id).change();
                     $(".select_stat").val(response.emp.emp_status).change();

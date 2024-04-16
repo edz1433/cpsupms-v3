@@ -460,8 +460,9 @@ class PayrollController extends Controller
     public function pdfRemittance($col, $payrollID){
         ini_set('memory_limit', '1024M');
         $deduct = "deductions";
-
+        
         $payroll = Payroll::find($payrollID);
+        
         $dateStart = date('F Y', strtotime($payroll->payroll_dateStart));
 
         $datas = Deduction::join('employees', 'deductions.emp_id', '=', 'employees.id')
@@ -470,7 +471,7 @@ class PayrollController extends Controller
         ->orderBy('employees.lname')
         ->get();
     
-        $datas = $datas->all(); 
+        // $datas = $datas->all(); 
 
         $customPaper = array(0, 0, 792, 842);
 
@@ -592,8 +593,15 @@ class PayrollController extends Controller
                 if($statID == 2){
                     $query->where('of.id', $cond, $office);
                 }
-            })
-            ->get();
+            });
+
+            if(Route::currentRouteName() === 'transmittal') {
+                $datas->orderBy('employees.lname')
+                      ->orderBy('employees.fname');
+            }
+            
+            $datas = $datas->get();
+
         }elseif($pid == 2){
             $datas = DB::table('payroll_files')
             ->join($dedtable, 'payroll_files.id', '=', $dedtable . '.payroll_id')
@@ -620,7 +628,7 @@ class PayrollController extends Controller
                         DB::raw('SUM(CASE WHEN action = "Deduction" AND `column` = "column5" THEN amount END) as rowcolamountded5'),
                         DB::raw('SUM(CASE WHEN action = "Deduction" AND `column` = "column6" THEN amount END) as rowcolamountded6'),
                         DB::raw('SUM(CASE WHEN action = "Deduction" AND `column` = "column7" THEN amount END) as rowcolamountded7'),
-
+                        
                         DB::raw('SUM(CASE WHEN action = "Refund" AND `column` = "column1" THEN label ELSE 0 END) as column1labelRef'),
                         DB::raw('SUM(CASE WHEN action = "Refund" AND `column` = "column2" THEN label ELSE 0 END) as column2labelRef'),
                         DB::raw('SUM(CASE WHEN action = "Refund" AND `column` = "column3" THEN label ELSE 0 END) as column3labelRef'),
@@ -670,8 +678,14 @@ class PayrollController extends Controller
                 if($statID == 2){
                     $query->where('of.id', $cond, $office);
                 }
-            })
-            ->get();
+            });
+            
+            if(Route::currentRouteName() === 'transmittal') {
+                $datas->orderBy('employees.lname')
+                      ->orderBy('employees.fname');
+            }
+            
+            $datas = $datas->get();
             
         }elseif($pid == 3){
             $datas = DB::table('payroll_files')

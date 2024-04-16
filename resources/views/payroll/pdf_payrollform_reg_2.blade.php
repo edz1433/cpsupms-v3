@@ -354,7 +354,7 @@
                         <td>{{ ($data->rowcolamountref7 > 0) ? number_format($data->rowcolamountref7, 2) : '' }}</td>
                         @endif
 
-                      <td>{{ number_format($data->add_less_abs1, 2) }}</td>
+                      <td>{{ ($data->add_less_abs1 > 0) ? number_format($data->add_less_abs1, 2) : '' }}</td>
                         @php $pstatus != 3 ? $totalrowEarnperiod += round($data->sumRef, 2) : '0.00' @endphp
                         <td >{{{ $pstatus != 3 ? number_format($rowEarn + ($data->sumRef - $absences1), 2) : '0.00' }}}</td>
                         @if($column1sumded > 0)
@@ -632,7 +632,7 @@
                                     @php $displayTotal = false; @endphp
                                 @endif
                             @endforeach
-                            {{ $displayTotal ? number_format($sum, 2) : '' }}<br>
+                            {{ ($displayTotal && $sum > 0) ? number_format($sum, 2) : '' }}<br>
                         @endforeach
                         {{ number_format((array_sum($grandearn_for_the_period)) - (array_sum($grandtotalabsences)),2) }}<br>
                     </td>    
@@ -658,14 +658,13 @@
                                 @php $displayTotal = false; @endphp
                             @endif
                           @endforeach
-                          {{ $displayTotal ? number_format($sum, 2) : '' }}<br>
+                          {{ ($displayTotal && $sum > 0) ? number_format($sum, 2) : '' }}<br>
                         @endforeach
-                      
 
                         {{ number_format((array_sum($grandearn_for_the_period) + ($totalSumRef) - ($totalSumDed)),2) }}
                     </td>
                     <td colspan="6">
-                      <div><strong>Approved for Payment:</strong></div><br><br><br><br>
+                      <div><strong style="margin-right: 63%;">Approved for Payment:</strong> {{ number_format((array_sum($grandearn_for_the_period) + ($totalSumRef - $totalSumDed)) - (array_sum($grandtotalabsences)),2) }}</div><br><br><br><br>
                       <div class="div-signature" style="width: 100%;"><strong>ALADINO C. MORACA, Ph.D.</strong></div>
                       <div class="div-signature" style="width: 100%;">SUC President II</div><br><br><br>
                       <div><strong>CERTIFIED</strong>: That each employee whose name appears above has been paid the amount indicated through direct<br><span style="margin-left: 53px;">credit to their respective accounts.</span></div><br><br><br><br>

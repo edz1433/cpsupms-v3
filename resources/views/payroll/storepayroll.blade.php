@@ -92,8 +92,8 @@ padding: 0.25em 0.5em;
                                         <i class="fas fa-file-pdf"></i> Transmittal
                                     </button>
                                     <div class="dropdown-menu" x-out-of-boundaries="" style="">
-                                        <a href="{{ route("transmittal", ['payrollID' => $payrollID, 'statID' => $statID, 'pid' => 1, 'stat' => 1, 'offid' => $offID]) }}" target="_blank" class="dropdown-item bg-secondary p-2">{{ $firstHalf }}</a>
-                                        <a href="{{ route("transmittal", ['payrollID' => $payrollID, 'statID' => $statID, 'pid' => 2, 'stat' => 1, 'offid' => $offID]) }}" target="_blank" class="dropdown-item bg-secondary p-2">{{ $secondHalf }}</a>
+                                        <a id="transmittal1" target="_blank" class="dropdown-item bg-secondary p-2">{{ $firstHalf }}</a>
+                                        <a id="transmittal2" target="_blank" class="dropdown-item bg-secondary p-2">{{ $secondHalf }}</a>
                                     </div>
                                 </div>
                                 <div class="btn-group">
@@ -109,12 +109,12 @@ padding: 0.25em 0.5em;
                                         <a href="{{ route("remittance", ['col' => 'eml', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> EML</a>
                                         <a href="{{ route("remittance", ['col' => 'pol_gfal', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> POLICY</a>
                                         <a href="{{ route("remittance", ['col' => 'consol', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> Consol</a>
-                                        <a href="{{ route("remittance", ['col' => 'ed_asst_mpl', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> MPL loan</a>
+                                        <a href="{{ route("remittance", ['col' => 'loan', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> MPL (GSIS)</a>
                                         <a href="{{ route("remittance", ['col' => 'rlip', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> RLIP</a>
                                         <a href="{{ route("remittance", ['col' => 'gfal', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> GFAL</a>
                                         <a href="{{ route("remittance", ['col' => 'computer', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> Computer</a>
                                         <a href="{{ route("remittance", ['col' => 'health', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> Health</a>
-                                        <a href="{{ route("remittance", ['col' => 'mpl', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> MPL</a>
+                                        <a href="{{ route("remittance", ['col' => 'mpl', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> MPL (PAG-IBIG)</a>
                                         <a href="{{ route("remittance", ['col' => 'prem', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> PREM.</a>
                                         <a href="{{ route("remittance", ['col' => 'calam_loan', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> Calamity Loan</a>
                                         <a href="{{ route("remittance", ['col' => 'mp2', 'payrollID' => $payrollID]) }}" target="_blank" class="dropdown-item"> MP2.</a>

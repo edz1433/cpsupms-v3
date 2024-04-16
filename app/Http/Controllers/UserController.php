@@ -78,7 +78,7 @@ class UserController extends Controller
             'Username' => 'required|unique:users,username,' . $id,
             'Role' => 'required',
         ]);
-
+    
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator);
         } else {
@@ -86,23 +86,28 @@ class UserController extends Controller
             if (!$user) {
                 return redirect()->back()->with('error', 'User not found');
             }
+    
 
-            $user->campus_id = $request->input('CampusName');
-            $user->fname = $request->input('FirstName');
-            $user->mname = $request->input('MiddleName');
-            $user->lname = $request->input('LastName');
-            $user->username = $request->input('Username');
-            $user->role = $request->input('Role');
-            
-            if ($request->has('Password')) {
-                $user->password = Hash::make($request->input('Password'));
+            $user->fname = $request->FirstName;
+            $user->mname = $request->MiddleName;
+            $user->lname = $request->LastName;
+            $user->username = $request->Username;
+
+            if (auth()->user()->role == "Administrator") {
+                $user->campus_id = $request->CampusName;
+                $user->role = $request->Role;
             }
 
+            if ($request->filled('Password')) {
+                $user->password = Hash::make($request->input('Password'));
+            }
+    
             $user->save();
-
+    
             return redirect()->back()->with('success', 'User Updated Successfully');
         }
     }
+    
 
     public function uDelete($id){
         $users = User::find($id);

@@ -39,7 +39,7 @@ Route::group(['middleware'=>['login_auth']],function(){
     Route::get('/users/ulist',[UserController::class,'ulist'])->name('ulist');
     Route::post('/users/uCreate',[UserController::class,'uCreate'])->name('uCreate');
     Route::get('/users/uEdit/{id}',[UserController::class,'uEdit'])->name('uEdit');
-    Route::post('/users/uUpdate',[UserController::class,'uUpdate'])->name('uUpdate');
+    Route::post('/uUpdate',[UserController::class,'uUpdate'])->name('uUpdate');
     Route::get('/users/uDelete/{id}',[UserController::class,'uDelete'])->name('uDelete');
 
     //Employee

@@ -85,7 +85,7 @@
                       CENTRAL PHILIPPINES STATE UNIVERSITY<br>
                       Kabankalan City, Negros Occidental<br><br>
 
-                      Remittance List - {{ ucwords(str_replace(['_'], ' ', $col)) }}<br>
+                      Remittance List - {{ ucwords(str_replace('_', ' ', $col == 'loan' ? 'mpl' : $col)) }} {{ ($col == 'loan') ? '(GSIS)' : '' }} {{ ($col == 'mpl') ? '(PAG-IBIG)' : '' }}<br>
                       For the month of {{ $dateStart }}
                     </th>
                   </tr>

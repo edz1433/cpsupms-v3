@@ -90,15 +90,17 @@
                                         <td>{{ $p->fname }} {{ $p->lname }}</td>
                                         <td>{{ $dstart }} TO {{ $dend }}</td>
                                         <td>
-                                            @if($p->stat_id == 1)
-                                            <a href="{{ route('payslip', ['payrollID' => $p->id]) }}" class="btn btn-info btn-sm" title="Payslip">
-                                                <i class="fas fa-file-invoice"></i>
-                                            </a>                                                    
-                                            @else
-                                            <a href="#"
-                                                class="btn btn-secondary btn-sm" title="Payslip">
-                                                <i class="fas fa-file-invoice"></i>
-                                            </a>
+                                            @if(auth()->user()->role !== "Payroll Extension")
+                                                @if($p->stat_id == 1)
+                                                <a href="{{ route('payslip', ['payrollID' => $p->id]) }}" class="btn btn-info btn-sm" title="Payslip">
+                                                    <i class="fas fa-file-invoice"></i>
+                                                </a>                                                    
+                                                @else
+                                                <a href="#"
+                                                    class="btn btn-secondary btn-sm" title="Payslip">
+                                                    <i class="fas fa-file-invoice"></i>
+                                                </a>
+                                                @endif
                                             @endif
                                             <a href="{{ route($routes, ['payrollID' => $p->id, 'statID' => $p->stat_id, 'offID' => 'All']) }}@if($p->stat_id != 1)?s=1 @endif" class="btn btn-info btn-sm" title="View">
                                                 <i class="fas fa-exclamation-circle"></i>

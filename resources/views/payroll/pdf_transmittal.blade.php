@@ -116,6 +116,7 @@
                       </thead>
                       <tbody>
                           @foreach ($datas as $data)
+                            
                                   @php
                                   $dataid = $data->id;
                                   $pstatus = $data->status;
@@ -158,25 +159,18 @@
                                     $rowEarnSum2 = array_sum($rowEarnsArray2);
                                   }
 
-                                  $rowEarn = isset($rowEarn ) ? $rowEarn : 0.00;
-                                  $rowEarnsArray[] = $rowEarn;
-                                  $rowEarnSum = array_sum($rowEarnsArray);
 
-                                  $rowEarnSum = isset($rowEarnSum) ? $rowEarnSum : 0.00;
-                                  $rowEarnSum1 = isset($rowEarnSum1) ? $rowEarnSum1 : 0.00;
-                                  $rowEarnSum2 = isset($rowEarnSum2) ? $rowEarnSum2 : 0.00;
-
-                                  $firsthalftotal = round($rowEarnSum + $rowEarnSum1, 2);
-                                  $secondhalftotal = round($rowEarnSum + $rowEarnSum2, 2);
                                   @endphp
+                                  @if(($pid == 1) ? $data->status == 1 : $data->status == 1 || $data->status == 2)
                                   <tr>
-                                      <td>{{ $data->lname }} {{ $data->fname }}</td>
+                                    <td>{{ mb_strtoupper($data->lname) }} {{ mb_strtoupper($data->fname) }} {{ mb_strtoupper($data->mname) }}</td>
+
                                       @if($pid == 1)
                                       <td>
                                           @if($pstatus == 1)
                                               {{ number_format($rowEarn, 2) }}
                                           @elseif($pstatus == 2)
-                                            @php $rowEarn1total += $rowEarn1 @endphp
+                                      
                                               {{ number_format($rowEarn1, 2) }}
                                           @else
                                               0.00
@@ -205,21 +199,13 @@
                                       </td>
                                       @endif
                                   </tr>
+                                  @endif
                           @endforeach
                       </tbody>
                       <tfoot>
-                        @php
-                          $grandfirsthalftotal[] = $firsthalftotal + $rowEarn1total;
-                          $grandrowEarntotal[] = $rowEarntotal + $rowEarn2total;
-
-                          
-                          $grandfirsthalftotal = array_sum($grandfirsthalftotal);
-                          $grandrowEarntotal = array_sum($grandrowEarntotal);
-                        @endphp
                         <tr>
-                          <td>GRAND TOTAL</td>
-                          @if($pid == 1)<td>{{ number_format($firsthalftotal + $rowEarn1total, 2)}}</td>@endif
-                          @if($pid == 2)<td>{{ number_format($rowEarntotal + $rowEarn2total, 2)}}</td>@endif
+                          <td><b>GRAND TOTAL</td>
+                          <td><b>{{ number_format(request()->query('amt'), 2) }}</td>
                         </tr>
                         <tr>
                           <td colspan="2">

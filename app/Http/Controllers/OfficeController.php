@@ -18,7 +18,6 @@ class OfficeController extends Controller
         $validator = Validator::make($request->all(), [
             'OfficeName'=>'required',
             'OfficeAbbreviation'=>'required',
-            'GroupBy'=>'required',
         ]);
 
         if ($validator->fails()) {
@@ -35,7 +34,7 @@ class OfficeController extends Controller
                 $query = Office::insert([
                     'office_name'=>$request->input('OfficeName'),
                     'office_abbr'=>$request->input('OfficeAbbreviation'),
-                    'group_by'=>$request->input('GroupBy'),
+                    'group_by' => $request->filled('GroupBy') ? $request->input('GroupBy') : '0'
                 ]);
                 
                 return redirect()->back()->with('success', 'Office Added Successfully'); 
@@ -58,7 +57,6 @@ class OfficeController extends Controller
         $validator = Validator::make($request->all(), [
             'OfficeName'=>'required',
             'OfficeAbbreviation'=>'required',
-            'GroupBy'=>'required',
         ]);
 
         if ($validator->fails()) {
@@ -75,7 +73,7 @@ class OfficeController extends Controller
                 $update = [
                     'office_name'=>$request->input('OfficeName'),
                     'office_abbr'=>$request->input('OfficeAbbreviation'),
-                    'group_by'=>$request->input('GroupBy')
+                    'group_by' => $request->filled('GroupBy') ? $request->input('GroupBy') : '0'
                 ];
                 DB::table('offices')->where('id', $request->oid)->update($update);
 

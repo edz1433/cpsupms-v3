@@ -23,12 +23,14 @@
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-hover" id="example1">
                                         <thead>
-                                            <tr>
+                                            <tr> 
                                                 <th>NO.</th>
                                                 <th>Full Name</th>
                                                 <th>Emp_ID</th> 
                                                 <th>Position</th>
+                                                @if(auth()->user()->role !== "Payroll Extension")
                                                 <th>SG-Step</th>
+                                                @endif
                                                 <th>Campus</th>
                                                 <th>Employee Status</th>
                                                 <th>Department/Office</th>
@@ -39,40 +41,42 @@
                                         </thead>
                                         <tbody>
                                             @php $cnt = 1; @endphp
-                                            @foreach ($employee as $emp)
-                                                <tr id="tr-{{ $emp->id }}">
-                                                    <td>{{ $cnt++ }}</td>
-                                                    <td>{{ $emp->lname }}, {{ $emp->fname, }} {{ $emp->mname, }}</td>
-                                                    <td>{{ $emp->emp_ID}}</td>
-                                                    <td>{{ $emp->position}}</td>
-                                                    <td>{{ $emp->sg_step}}</td>
-                                                    <td>{{ $emp->campus_abbr}}</td>
-                                                    <td>
+                                            @foreach ($employees as $emp)
+                                            <tr id="tr-{{ $cnt++ }}">
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $emp->lname }}, {{ $emp->fname }} {{ $emp->mname }}</td>
+                                                <td>{{ $emp->emp_ID }}</td>
+                                                <td>{{ $emp->position }}</td>
+                                                @if(auth()->user()->role !== "Payroll Extension")
+                                                <td>{{ $emp->sg_step }}</td>
+                                                @endif
+                                                <td>{{ $emp->campus_name }}</td>
+                                                <td>
                                                     @if($emp->partime_rate > 0)
-                                                        {{ $emp->status_name}} And <br>
+                                                        {{ $emp->status_name }} And <br>
                                                         Part-time/Part-time
                                                     @elseif($emp->emp_status == 2)
-                                                        {{ $emp->status_name }} ({{ $emp->qual }})
+                                                        {{ $emp->status_name }} ({{ $emp->qualification }})
                                                     @else
-                                                        {{ $emp->status_name}}
+                                                        {{ $emp->status_name }}
                                                     @endif
-                                                    </td>
-                                                    <td>{{ $emp->office_name}}</td>
-                                                    <td>{{ number_format($emp->emp_salary, 2)}}</td>
-                                                    <td>{{ number_format($emp->partime_rate, 2) }}</td>
-                                                    <td>
-                                                       <div class='d-flex align-items-center'>
-                                                            <input id="{{ $emp->id }}" type='checkbox' class='form-control checkbox-partime' title='part-time' @if($emp->emp_status != 4)disabled @elseif($emp->emp_status==4 && $emp->partime_rate>0) checked @else  @endif> 
-                                                            <button class='btn btn-info btn-xs employee_edit mr-1' style='width: 50px;' value="{{ $emp->id }}">
-                                                                <i class='fas fa-exclamation-circle'></i>
-                                                            </button>
-                                                            <button type='button' class='btn btn-danger btn-xs employee_delete' style='width: 50px;' value="{{ $emp->id }}">
-                                                                <i class='fas fa-trash'></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
+                                                </td>
+                                                <td>{{ $emp->office_name }}</td>
+                                                <td>{{ number_format($emp->emp_salary, 2) }}</td>
+                                                <td>{{ number_format($emp->partime_rate, 2) }}</td>
+                                                <td>
+                                                    <div class='d-flex align-items-center'>
+                                                        <input id="{{ $emp->empid }}" type='checkbox' class='form-control form-control-sm checkbox-partime ' title='part-time' @if($emp->emp_status != 4)disabled @elseif($emp->emp_status==4 && $emp->partime_rate>0) checked @else  @endif> 
+                                                        <button class='btn btn-info btn-sm employee_edit mr-1' style='width: 50px;' value="{{ $emp->empid }}">
+                                                            <i class='fas fa-exclamation-circle'></i>
+                                                        </button>
+                                                        <button type='button' class='btn btn-danger btn-sm employee_delete' style='width: 50px;' value="{{ $emp->empid }}">
+                                                            <i class='fas fa-trash'></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach                                                                             
                                         </tbody> 
                                     </table>
                                 </div>

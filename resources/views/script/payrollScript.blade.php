@@ -656,10 +656,11 @@
     const totalElement1 = document.getElementById("secondtHalfTotal");
     const totalElement2 = document.getElementById("grandtotalnet");
 
-    totalElement.textContent = sum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    totalElement1.textContent = sum1.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    var totamthalf = totalElement.textContent = sum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    var totamtsec = totalElement1.textContent = sum1.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     totalElement2.textContent = sumtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+    transmittalurl(totamthalf, totamtsec);
     //Modifies
 
     const totalRef = document.querySelectorAll(".totalRef");
@@ -793,5 +794,37 @@ function convertToWords(amount) {
             }
         });
     });
+</script>
+<script>
+    
+
+</script>
+<script>
+    function transmittalurl(totamthalf, totamtsec) {
+        var totamthalfNoComma = totamthalf.replace(/,/g, "");
+        var totamtsecNoComma = totamtsec.replace(/,/g, "");
+        var payrollID = '{{ $payrollID }}';
+        var statID = '{{ $statID }}';   
+        var offID = '{{ $offID }}';
+        
+        var transmittalRoute1 = "{{ route('transmittal', ['payrollID' => ':payrollID', 'statID' => ':statID', 'pid' => 1, 'stat' => 1, 'offid' => ':offID']) }}";
+        transmittalRoute1 = transmittalRoute1.replace(':payrollID', payrollID)
+                                            .replace(':statID', statID)
+                                            .replace(':offID', offID)
+                                            .replace(':amount', totamthalfNoComma);
+
+        transmittalRoute1 += "&amt=" + totamthalfNoComma;
+
+        var transmittalRoute2 = "{{ route('transmittal', ['payrollID' => ':payrollID', 'statID' => ':statID', 'pid' => 2, 'stat' => 1, 'offid' => ':offID']) }}";
+        transmittalRoute2 = transmittalRoute2.replace(':payrollID', payrollID)
+                                            .replace(':statID', statID)
+                                            .replace(':offID', offID)
+                                            .replace(':amount', totamtsecNoComma);
+
+        transmittalRoute2 += "&amt=" + totamtsecNoComma;
+
+        document.getElementById('transmittal1').setAttribute('href', transmittalRoute1);
+        document.getElementById('transmittal2').setAttribute('href', transmittalRoute2);
+    }
 </script>
 @endif

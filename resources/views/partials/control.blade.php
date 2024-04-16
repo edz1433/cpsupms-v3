@@ -18,9 +18,12 @@
             <a href="{{ route('viewPayroll', $encryptedId) }}?sid=all" class="btn btn-app {{$current_route == 'viewPayroll' || $current_route == 'storepayroll' || $current_route == 'storepayroll-jo' || $current_route == 'storepayroll-partime-jo' || $current_route == 'storepayroll-partime' || $current_route == 'payslip' ? 'active' : ''}}">
                 <i class="fas fa-file-invoice"></i> Payroll
             </a>
+
+            @if(auth()->user()->role != "Payroll Extension")
             <a href="{{ route('officeList') }}" class="btn btn-app {{$current_route=='officeList' || $current_route=='officeEdit' ?'active':''}}">
                 <i class="fas fa-building"></i> Offices
             </a>
+            @endif
 
             @if(auth()->user()->role == "Administrator")
             <a href="{{ route('ulist') }}" class="btn btn-app {{$current_route=='ulist' || $current_route=='uEdit'?'active':''}}">
@@ -28,11 +31,9 @@
             </a>
             @endif
 
-            @if(auth()->user()->role != "Payroll Extension")
             <a href="{{ route('settings') }}" class="btn btn-app {{$current_route=='settings' || $current_route=='settingsDeduction' || $current_route=='settingsPayroll' ?'active':''}}">
                 <i class="fas fa-cog rotate-gear"></i> Settings
             </a>
-            @endif
             
         </div>
     </div>

@@ -38,6 +38,7 @@
                         <div class="form-group">
                             <div class="form-row">
                                 <div class="col-md-12">
+                                    @if(auth()->user()->role == "Administrator")
                                     <label for="exampleInputName">Group By:</label>
                                     <select class="form-control select2" name="GroupBy" style="width: 100%;" required>
                                         <option value="0"> None </option>
@@ -47,6 +48,7 @@
                                             @endif
                                         @endforeach
                                     </select>   
+                                    @endif
                                 </div>
                             </div>
                         </div> 
@@ -88,7 +90,9 @@
                                     <th>No</th>
                                     <th>Office</th>
                                     <th>Abbreviation</th>
+                                    @if(auth()->user()->role == "Administrator")
                                     <th>Group</th>
+                                    @endif
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -102,7 +106,9 @@
                                         <td>{{ $no++ }}</td>
                                         <td>{{ $office->office_name }}</td>
                                         <td>{{ $office->office_abbr }}</td>
+                                        @if(auth()->user()->role == "Administrator")
                                         <td>{{ $groupOffice ? $groupOffice->office_abbr : 'None' }}</td>
+                                        @endif
                                         <td>
                                             <a href="{{ route('officeEdit', $office->id) }}" class="btn btn-info btn-xs">
                                                 <i class="fas fa-exclamation-circle"></i>

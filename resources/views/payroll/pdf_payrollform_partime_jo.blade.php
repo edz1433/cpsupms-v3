@@ -466,13 +466,13 @@
                     </td>
                     <td>
                       <span style="width:100%; text-align: left; float: right;">
-                        {{-- {{ $code->wages_code }} Labor and Wages<br>
+                        {{ $code->wages_code }} Labor and Wages<br>
                         {{ $code->bir_code }} Due to BIR<br>
                         @if($sumjosss > 0) {{ $code->otherpayable_code }} Other Payables (SSS) <br>@endif
                         @if($sumprojects > 0){{ $code->otherpayable_code }} Other Payables (Project) <br>@endif
                         @if($sumnscampc > 0){{ $code->otherpayable_code }} Other Payables (NSCA MPC) <br>@endif
                         @if($sumgradscl > 0){{ $code->otherpayable_code }} Other Payables (Graduate School) <br>@endif
-                        {{ $code->bank_code }} Cash in Bank-LC, LBP<br> --}}
+                        {{ $code->bank_code }} Cash in Bank-LC, LBP<br>
                       </span>
                     </td>
                       <td>

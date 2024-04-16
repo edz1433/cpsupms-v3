@@ -101,7 +101,7 @@
                             @endif
 
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="username" placeholder="Username" value="{{ old('username') }}" autofocus="" required="">
+                                <input type="text" class="form-control" name="username" placeholder="Username" value="{{ old('username') }}" autocomplete="off" autofocus="" required="">
                                 <div class="input-group-append">
                                     <div class="input-group-text iconBg">
                                         <span class="fas fa-user text-light"></span>
@@ -111,7 +111,7 @@
                             <span style="color: #FF0000; font-size: 8pt;" class="form-text text-center">@error('username') {{ $message }} @enderror</span>
 
                             <div class="input-group">
-                                <input type="password" class="form-control" name="password" id="myInput" placeholder="Password" required="">
+                                <input type="password" class="form-control" name="password" id="myInput" placeholder="Password" autocomplete="off" required="">
                                 <div class="input-group-append">
                                     <div class="input-group-text iconBg">
                                         <span class="fas fa-lock text-light"></span>

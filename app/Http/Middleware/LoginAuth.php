@@ -21,13 +21,18 @@ class LoginAuth
                 return redirect()->route('getLogin')->with('error','You have to be admin user to access this page');
             }
             if(auth()->user()->hasRole('Payroll Administrator')){
-                if ($request->is('users') || $request->is('users/*')) {
+                if ($request->is('users/*')) {
                     return redirect()->route('dashboard')->with('error1', 'You do not have permission to access this page');
+                }
+
+                if(auth()->user()->p_status == 2){
+                    if ($request->is('setting-payroll')){
+                        return redirect()->route('dashboard')->with('error1', 'You do not have permission to access this page');
+                    }
                 }
             }
             if(auth()->user()->hasRole('Payroll Extension')) {
-                // restrict access to certain pages
-                if ($request->is('users', 'office') || $request->is('users/*', 'office/*')) {
+                if ($request->is('users/*', 'office/*', 'setting-payroll/*')) {
                     return redirect()->route('dashboard')->with('error1', 'You do not have permission to access this page');
                 }
             }
