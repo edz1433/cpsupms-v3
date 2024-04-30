@@ -19,6 +19,7 @@ class ModifyJo extends Model
         'label',
         'action',
         'amount',
+        'pay_status',   
     ];
     // use HasFactory;
 }
