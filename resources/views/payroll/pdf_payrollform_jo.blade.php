@@ -393,7 +393,7 @@
                         @if($sumnscampc > 0){{ $code->otherpayable_code }} Other Payables (NSCA MPC) <br>@endif
                         @if($sumgradscl > 0){{ $code->otherpayable_code }} Other Payables (Graduate School) <br>@endif
                         @if($modcoltotalrowded > 0) 1030599000 Other Receivable <br>@endif
-                        {{ $code->bank_code }} Cash in Bank-LC, LBP<br>
+                        {{ $code->bank_code }} @if($payroll->fund == "MDS") Cash MDS, Regular @else Cash in Bank-LC, LBP @endif<br>
                       </span>
                     </td>
                       <td>
@@ -444,4 +444,11 @@
     </body>    
 </html>
 
-
+<script>
+  document.addEventListener("keydown", function(e) {
+      if (e.ctrlKey && e.key === "p") {
+          e.preventDefault();
+          alert("Printing is disabled");
+      }
+  });
+</script>

@@ -134,6 +134,51 @@
         })
     });
 
+    // Submit Payroll
+    $(document).on('click', '.payroll-updatestat', function(e){
+        var id = $(this).val();
+        var stat = $(this).data('stat');
+
+        var textq = (stat == 'Pending') ? "This will submit the payroll!" : (stat == 'Preparing') ? "This will reset the payroll!" : "This will approve the payroll!";
+        
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+        });
+        Swal.fire({
+            title: 'Are you sure?',
+            text: textq,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!'
+        }).then((result) => {
+            if (result.isConfirmed){
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('payrolstatUpdate', [':id', ':stat']) }}".replace(':id', id).replace(':stat', stat),
+                    success: function (response) {  
+                        // Assuming response is a success message
+                        Swal.fire({
+                            title: 'Submitted!',
+                            text: 'Your message here',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            timerProgressBar: true,
+                            didClose: () => {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+
     $(document).on('click', '.deletePayrollFiles', function(e){
         var id = $(this).val();
         $.ajaxSetup({
@@ -257,11 +302,11 @@
                 },
                 success: function(response) {
                     $('.form-row.modify-show').empty();
-                    console.log(response.data);
+                    console.log(response.pfile);
                     response.data.forEach(function(mody) {
 
                         var formElement = `
-                            <div class="col-md-{{ $curr_route != 'storepayroll' ? 3 : 2 }}">
+                            <div class="col-md-{{ $curr_route != 'storepayroll' ? 2 : 2 }}">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -282,7 +327,7 @@
                                         </span>
                                     </div>
                                     <input type="hidden" name="id" id="id" value="${mody.payroll_id}">
-                                    <input type="text" name="${mody.column}_label" value="${mody.label}" class="form-control float-right">
+                                    <input type="text" id="${mody.column}-label" name="${mody.column}_label" value="${mody.label}" class="form-control float-right">
                                 </div>
                             </div>
                             @if($curr_route !== "storepayroll")
@@ -297,6 +342,18 @@
                                         </label>
                                     </div>
                                 </div>                                
+                            </div>
+                            <div class="col-md-2">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="far fa-clipboard"></i>
+                                        </span>
+                                    </div>
+                                    <select type="text" onchange="stypeStat(this.value, '${mody.column}', this)" name="${mody.column}_add_to_payroll" id="${mody.column}-stypestat" class="form-control add_to_payroll float-right">
+                                      
+                                    </select>
+                                </div>
                             </div>
                             @endif
                             @if($curr_route == "storepayroll")
@@ -349,19 +406,29 @@
                                 </div>
                             </div>
                             @endif
-                            <div class="col-md-{{ $curr_route != 'storepayroll' ? 3 : 2 }}">
+                            <div class="col-md-{{ $curr_route != 'storepayroll' ? 2 : 2 }}">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
                                             <i class="far fa-clipboard"></i>
                                         </span>
                                     </div>
-                                    <input type="number" id="add_step_incre" name="${mody.column}_amount" step="any" min="0" onchange="if (this.value <= 0) {this.value = '0.00';}" value="${mody.amount}" class="form-control float-right">
+                                    <input type="number" id="${mody.column}-amount" name="${mody.column}_amount" step="any" min="0" onchange="if (this.value <= 0) {this.value = '0.00';}" value="${mody.amount}" class="form-control float-right">
                                 </div>
                             </div>
                         `;
 
                         $('.form-row.modify-show').append(formElement);
+                    });
+
+                    var options = response.options;
+                    $('.add_to_payroll').each(function() {
+                        var select = $(this);
+                        select.empty(); 
+                        select.append('<option value="">-- select --</option>');
+                        $.each(options, function(index, option) {
+                            select.append('<option value="' + option.id + '" data-label="' + option.dateRange + '" data-salary="' + option.salary + '">' + option.dateRange + '</option>');
+                        });
                     });
                 }
             });
@@ -369,6 +436,21 @@
         }
 
     });
+
+    function stypeStat(selectedValue, column, selectElement) {
+        var label = $(selectElement).find('option:selected').data('label');
+        var salary = $(selectElement).find('option:selected').data('salary');
+
+        $('#'+column+'-amount').val(salary);
+        $('#'+column+'-label').val(label);
+
+
+        // alert(selectedValue);
+        // $('.add_to_payroll').not('#add_to_payroll').each(function() {
+        //     $(this).find('option').prop('disabled', false); // Enable all options
+        //     $(this).find('option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected option
+        // });
+    }
 
     $(document).on('click', '.additional', function(e){    
         e.preventDefault();
@@ -700,8 +782,8 @@
 
 });
 
-function incomStat(val){
-    var net = $('#net-'+val).text();
+function incomStat(val, stat){
+    var net = (stat == 1) ? $('#net1-'+val).text() : $('#net2-'+val).text();
     var netxcomma = net.replace(/,/g, '');
     var netHalf = parseFloat(netxcomma);
     netTotal = netHalf.toFixed(2);
@@ -827,4 +909,5 @@ function convertToWords(amount) {
         document.getElementById('transmittal2').setAttribute('href', transmittalRoute2);
     }
 </script>
+
 @endif

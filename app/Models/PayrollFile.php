@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PayrollFile extends Model
 {
+    protected $table = 'payroll_files';
     protected $fillable = [
         'payroll_ID', 'camp_ID', 'stat_ID', 'emp_id', 'emp_pos', 'sg',
         'salary_rate', 'hr_day', 'number_hours', 'number_days', 'total_salary',

@@ -74,19 +74,45 @@ class PayrollController extends Controller
             $userid = auth()->user()->id;
             $campId = Crypt::decrypt($campId);
             $sid = $request->input('sid');
+            
             $statusall = Status::all();
 
+            if ($role == "Payroll Extension") {
+                $statusall = $statusall->where('id', '!==', 1);
+            }
+
             $cond = $sid == 'all' ? '!=' : '=';
+
+            $camp = Campus::leftJoin('payrolls', 'campuses.id', '=', 'payrolls.campus_id')
+            ->select('campuses.id', 'campuses.campus_name', DB::raw('COUNT(payrolls.id) as preparing_count'))
+            ->where(function ($query) {
+                $query->where('payrolls.pay_status', 'Pending')
+                      ->orWhere('payrolls.pay_status', 'Under Review');
+            })
+            ->groupBy('campuses.id', 'campuses.campus_name')
+            ->get();
+            
+            $allCampuses = Campus::select('id', 'campus_name')->get();
+
+            $campusCounts = [];
+            foreach ($camp as $c) {
+                $campusCounts[$c->id] = $c->preparing_count;
+            }
+            
+            foreach ($allCampuses as $campus) {
+                if (!isset($campusCounts[$campus->id])) {
+                    $camp->push((object)['id' => $campus->id, 'campus_name' => $campus->campus_name, 'preparing_count' => 0]);
+                }
+            }
+            
+            $camp = $camp->sortBy('id');    
     
             if ($role == "Administrator" || $role == "Payroll Administrator") {
-                $status = Status::all();
-                $camp = Campus::all();
-
+                $status = Status::all();     
             } elseif ($role == "Payroll Extension" && auth()->user()->campus_id != $campId) {
                 throw new \Exception('You do not have permission to access this page');
             } else {
                 $status = Status::where('status_name', '!=', 'Regular')->get();
-                $camp = Campus::find(auth()->user()->campus_id)->get();
             }
 
             $pays = Payroll::join('campuses', 'payrolls.campus_id', '=', 'campuses.id')
@@ -101,7 +127,7 @@ class PayrollController extends Controller
             return view("payroll.viewPayroll", compact('camp', 'statusall', 'status', 'campId', 'pays', 'sid'));
 
         } catch (\Exception $e) { 
-            return redirect()->back()->with('error', 'You do not have permission to access this page');  
+            return redirect()->back()->with('error', 'You do not have permission to access this pagesssss');  
         }
     } 
 
@@ -187,6 +213,14 @@ class PayrollController extends Controller
         //     return redirect()->back()->with('error', 'An error occurred: ' . 'You do not have permission to access this page'); 
         // }
     }
+
+    public function payrolstatUpdate($id, $stat){
+        $payroll = Payroll::find($id);
+        $payroll->pay_status = $stat;
+    
+        $payroll->save();
+    }
+    
 
     public function deletePayroll($id){
         $payroll = Payroll::find($id);
@@ -391,10 +425,17 @@ class PayrollController extends Controller
 
             $page = ($statID == 1) ? "storepayroll" : ($statID == 2 ? "storepayroll_full_partime" : ($statID == 3 ? "storepayroll_partime_jo" : ($statID == 4 ? ($payroll->jo_type == 1) ? "storepayroll_jo" : 'storepayroll_jo1' : '')));
     
-
+            
             if(auth()->user()->role == "Administrator" || auth()->user()->role == "Payroll Administrator"){
                 $status = Status::all();
                 $camp = Campus::all();
+
+                $payrollstat = Payroll::find($payrollID);
+
+                if($payrollstat->pay_status == 'Pending'){
+                    $payrollstat->pay_status = 'Under Review';
+                    $payrollstat->save();
+                }
             }
             else{
                 if(auth()->user()->campus_id != $campId){
@@ -405,10 +446,10 @@ class PayrollController extends Controller
             }
 
             if($PayrollFile){
-                return view('payroll.'.$page, compact('camp', 'office', 'offID', 'status', 'currentcamp', 'empStat', 'pfiles', 'campId', 'statID', 'payrollID', 'employee', 'codes', 'days', 'firstHalf', 'secondHalf', 'daterange', 'deduction', 'modify1', 'modifyRef', 'modifyDed', 'firstHalfday', 'secondHalfday'));
+                return view('payroll.'.$page, compact('camp', 'office', 'offID', 'status', 'currentcamp', 'empStat', 'pfiles', 'campId', 'statID', 'payrollID', 'employee', 'codes', 'days', 'firstHalf', 'secondHalf', 'daterange', 'deduction', 'modify1', 'modifyRef', 'modifyDed', 'firstHalfday', 'secondHalfday', 'payroll'));
             }
             else{
-                return view('payroll.'.$page, compact('camp', 'office', 'offID', 'status', 'currentcamp', 'empStat', 'pfiles', 'campId', 'statID', 'payrollID', 'employee', 'codes', 'days', 'firstHalf', 'secondHalf', 'daterange', 'modify1', 'modifyRef', 'modifyDed'));
+                return view('payroll.'.$page, compact('camp', 'office', 'offID', 'status', 'currentcamp', 'empStat', 'pfiles', 'campId', 'statID', 'payrollID', 'employee', 'codes', 'days', 'firstHalf', 'secondHalf', 'daterange', 'modify1', 'modifyRef', 'modifyDed', 'payroll'));
             }
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred: ' . 'You do not have permission to access this page'); 
@@ -595,7 +636,7 @@ class PayrollController extends Controller
                 }
             });
 
-            if(Route::currentRouteName() === 'transmittal') {
+            if(Route::currentRouteName() === 'transmittal' || $statID == 2 || $statID == 4) {
                 $datas->orderBy('employees.lname')
                       ->orderBy('employees.fname');
             }
@@ -783,8 +824,8 @@ class PayrollController extends Controller
                     return redirect()->back()->with('error', 'Select Office/Department');
                 }
 
-                $pdf = \PDF::loadView($viewTemplate, compact('datas', 'firstHalf', 'secondHalf', 'code', 'modify1', 'pid', 'offid', 'campusname', 'numdays'))->setPaper($customPaper, 'landscape');
-                
+                $pdf = \PDF::loadView($viewTemplate, compact('datas', 'firstHalf', 'secondHalf', 'code', 'modify1', 'pid', 'offid', 'campusname', 'numdays', 'payroll'))->setPaper($customPaper, 'landscape');
+
                 $pdf->setOption('margin-top', 0);
                 $pdf->setOption('margin-right', 0);
                 $pdf->setOption('margin-bottom', 0);

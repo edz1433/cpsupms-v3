@@ -57,7 +57,7 @@ th{
                                             $pid = 2;
                                         }
                                     @endphp
-                                    <a href="{{ route("pdf", ['payrollID' => $payrollID, 'statID' => $statID, 'pid' => $pid, 'offid' => $offID, 'stat' => 1]) }}" target="_blank">
+                                    <a href="{{ route("pdf", ['payrollID' => $payrollID, 'statID' => $statID, 'pid' => $pid, 'offid' => $offID, 'stat' => 1]) }}{{ ($payroll->pay_status == 'Approved') ? '' : '#toolbar=0' }}" target="_blank">
                                         <button id="open-pdf" target="_blank"  class="btn btn-info btn-sm">
                                             <i class="fas fa-print"></i> Print Payroll
                                         </button>
@@ -129,61 +129,61 @@ th{
                                 <br>
                                 <table id="example1" class="table table-bordered table-hover table-pay">
                                     <thead>
-                                            <tr>
-                                                <th>No.</th>
-                                                <th width="6%">Emp. ID</th>
-                                                <th width="10%">Full Name</th>
-                                                <th>Dept/Office</th> 
-                                                <th>Designation</th>
-                                                <th>Gross Income</th>
-                                                @if(isset($modify1))
-                                                    @foreach ($modify1 as $mody)
-                                                        @if ($mody->action === 'Additionals' && array_key_exists($mody->column, $columns_jo))
-                                                            @php
-                                                                $columns_jo[$mody->column] += $mody->amount;
-                                                            @endphp
-                                                        @endif
-                                                        @if ($mody->action === 'Deduction' && array_key_exists($mody->column, $columns_joded))
-                                                            @php
-                                                                $columns_joded[$mody->column] += $mody->amount;
-                                                            @endphp
-                                                        @endif
-                                                    @endforeach
+                                        <tr>
+                                            <th>No.</th>
+                                            <th width="6%">Emp. ID</th>
+                                            <th width="10%">Full Name</th>
+                                            <th>Dept/Office</th> 
+                                            <th>Designation</th>
+                                            <th>Gross Income</th>
+                                            @if(isset($modify1))
+                                                @foreach ($modify1 as $mody)
+                                                    @if ($mody->action === 'Additionals' && array_key_exists($mody->column, $columns_jo))
+                                                        @php
+                                                            $columns_jo[$mody->column] += $mody->amount;
+                                                        @endphp
+                                                    @endif
+                                                    @if ($mody->action === 'Deduction' && array_key_exists($mody->column, $columns_joded))
+                                                        @php
+                                                            $columns_joded[$mody->column] += $mody->amount;
+                                                        @endphp
+                                                    @endif
+                                                @endforeach
+                                            @endif
+                                            @foreach ($columns_jo as $column => $total)
+                                                @if ($total != 0.00)
+                                                @foreach ($modify1 as $mody)
+                                                    @if ($mody->column === $column)
+                                                        @php
+                                                            $label = preg_replace('/(January|February|March|April|May|June|July|August|September|October|November|December)/', '$1<br>', $mody->label);
+                                                        @endphp
+                                                        <th style="text-align: center">{!! $label !!}</th>
+                                                        @break
+                                                    @endif
+                                                @endforeach
                                                 @endif
-                                                @foreach ($columns_jo as $column => $total)
-                                                    @if ($total != 0.00)
-                                                    @foreach ($modify1 as $mody)
-                                                        @if ($mody->column === $column)
-                                                            @php
-                                                                $label = preg_replace('/(January|February|March|April|May|June|July|August|September|October|November|December)/', '$1<br>', $mody->label);
-                                                            @endphp
-                                                            <th style="text-align: center">{!! $label !!}</th>
-                                                            @break
-                                                        @endif
-                                                    @endforeach
+                                            @endforeach              
+                                            <th style="text-align: center">Deduction<br>Absent</th>
+                                            <th style="text-align: center">Deduction<br>Late</th>
+                                            <th>Earn for period</th>
+                                            @foreach ($columns_joded as $column => $total)
+                                                @if ($total != 0.00)
+                                                @foreach ($modify1 as $mody)
+                                                    @if ($mody->column === $column)
+                                                        @php
+                                                            $label = preg_replace('/(January|February|March|April|May|June|July|August|September|October|November|December)/', '$1<br>', $mody->label);
+                                                        @endphp
+                                                        <th style="text-align: center">{!! $label !!}</th>
+                                                        @break
                                                     @endif
-                                                @endforeach              
-                                                <th style="text-align: center">Deduction<br>Absent</th>
-                                                <th style="text-align: center">Deduction<br>Late</th>
-                                                <th>Earn for period</th>
-                                                @foreach ($columns_joded as $column => $total)
-                                                    @if ($total != 0.00)
-                                                    @foreach ($modify1 as $mody)
-                                                        @if ($mody->column === $column)
-                                                            @php
-                                                                $label = preg_replace('/(January|February|March|April|May|June|July|August|September|October|November|December)/', '$1<br>', $mody->label);
-                                                            @endphp
-                                                            <th style="text-align: center">{!! $label !!}</th>
-                                                            @break
-                                                        @endif
-                                                    @endforeach
-                                                    @endif
-                                                @endforeach 
-                                                <th>Total Ded.</th>
-                                                <th>Net amount</th>
-                                                <th>Status</th>
-                                                <th width="7%">Action</th>
-                                            </tr>
+                                                @endforeach
+                                                @endif
+                                            @endforeach 
+                                            <th>Total Ded.</th>
+                                            <th>Net amount</th>
+                                            <th class="text-center">Status</th>
+                                            <th class="text-center" width="7%">Action</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                         @php
@@ -291,15 +291,11 @@ th{
                                             @endforeach
                                             <td>{{ number_format($totaldeduction + $totaljoAddDed, 2) }}</td>
                                             <td>{{ number_format(($earnperiod + $totaljoAdd) - ($absent + $late) - ($totaljoAddDed + $totaldeduction), 2) }}</td>
-                                            <td>
+                                            <td class="text-center">
                                                 <div class="btn-group">
-                                                    <button type="button" style="height:32px; width: 140px;" class="btn btn-{{$pstatus == 1 ? 'success' : '' }}{{$pstatus == 2 ? 'warning' : '' }}{{$pstatus == 3 && $p->voucher != 1 ? 'danger' : '' }}{{$pstatus == 3 && $p->voucher == 1 ? 'info' : '' }} dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <button type="button" style="height:32px; width: 140px;" class="btn btn-{{$pstatus == 1 ? 'success' : '' }}{{$pstatus == 2 ? 'warning' : '' }} dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                                         {{$pstatus == 1 ? 'Complete' : '' }}
                                                         {{$pstatus == 2 ? 'Complete (late)' : '' }}
-                                                        @if ($data->status == 3 && $data->voucher == 1)
-                                                            <div style="color:white; margin-top: -6px; font-size: 11px;">NO DTR</div>
-                                                            <div style="color:white; margin-left: 28px; font-size: 11px; height: 14px; width: 60px; margin-top: -5px; color: white; border-radius: 5px;">(complied)</div>
-                                                        @endif
                                                     </button>                                          
                                                     <div class="dropdown-menu" x-out-of-boundaries="" style="">
                                                         <a href="{{ route('statUpdate', ['id' => $data->pid, 'val' => '1']) }}" class="dropdown-item bg-success p-2 mt-1">Complete </a>
@@ -307,7 +303,7 @@ th{
                                                     </div>                                                        
                                                 </div> 
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 <div class="btn-group">
                                                     <button type="button" style="height:32px;" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="deductions">
                                                     </button>

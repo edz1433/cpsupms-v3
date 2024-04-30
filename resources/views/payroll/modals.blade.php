@@ -3,7 +3,7 @@
 @endphp
 <style>
     .modal-xl-plus {
-        max-width: 80%;
+        max-width: 90%;
     }
 </style>
 
@@ -318,7 +318,7 @@
                                                 <i class="far fa-calendar"></i>
                                             </span>
                                         </div>
-                                        <input type="number" name="number_hours" step="any" min="1" value="{{ $days }}" placeholder="No. of working Days" class="form-control" required>
+                                        <input type="number" name="number_hours" step="any" min="0" value="{{ $days }}" placeholder="No. of working Days" class="form-control" required>
                                        </div>    
                                     <span style="color: #FF0000; font-size: 10pt;" class="form-text text-left FirstName_error"></span>
                                 </div>

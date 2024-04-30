@@ -75,6 +75,7 @@ Route::group(['middleware'=>['login_auth']],function(){
     Route::get('/statupdate/{id}/{val}', [PayrollController::class, 'statUpdate'])->name('statUpdate');
     Route::post('/voucher-create', [PayrollController::class, 'voucherCreate'])->name('voucherCreate');
     Route::get('/pdf/voucher/{id}', [PayrollController::class, 'pdfVoucher'])->name('pdfVoucher');
+    Route::get('/payrolstatUpdate/{id}/{stat}',[PayrollController::class,'payrolstatUpdate'])->name('payrolstatUpdate');
     
     Route::post('/modify/show', [ModifyController::class, 'modifyShow'])->name('modifyShow');
     Route::post('/modify/update', [ModifyController::class, 'modifyUpdate'])->name('modifyUpdate');

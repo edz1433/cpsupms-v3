@@ -16,6 +16,7 @@ class Payroll extends Model
         'payroll_dateStart',
         'payroll_dateEnd',
         'user_id',
+        'pay_status',
     ];
     
     // use HasFactory;

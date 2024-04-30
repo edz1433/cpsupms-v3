@@ -119,7 +119,7 @@ class ImportController extends Controller
             
             if($statID == 4){
                 $salary = $employees->emp_salary;
-                $earn = $salary / 2;
+                $earn = ($number_hours == 0) ? '0.00' : $salary / 2;
                 $tax1 = round($earn * $settax1, 2);
             }
 

@@ -9,8 +9,8 @@
                     <ul class="nav nav-pills flex-column">
                         <li class="nav-item">
                             @foreach($camp as $c)
-                                <a href="{{ route('viewPayroll', encrypt($c->id)) }}?sid=all" class="nav-link2 @if($c->id == $campId) active @endif" style="color: #000; @if(auth()->user()->role == "Payroll Extension" && $c->id != $campId) pointer-events: none; cursor: default;   @endif">
-                                    {{ $c->campus_abbr }}
+                                <a href="{{ route('viewPayroll', encrypt($c->id)) }}?sid=all" class="nav-link2 @if($c->id == $campId) active @endif" style="color: #000; @if(auth()->user()->role == "Payroll Extension" && $c->id != $campId) pointer-events: none; cursor: default; @endif">
+                                    {{ $c->campus_name }} <span class="badge badge-{{ ($c->id != 1) ? $c->preparing_count > 0 ? 'warning' : 'secondary' : 'secondary' }} float-right">{{ ($c->id != 1) ? $c->preparing_count : '0' }}</span>
                                 </a>
                             @endforeach
                         </li>
@@ -32,21 +32,19 @@
                             <i class="fas fa-minus"></i>
                         </button>
                     </div>
-                    @if($campId == 1)
-                        <div class="card-tools mr-3">   
-                            <div class="input-group">    
-                                <select class="form-control select2" id="statusall" required>
-                                    <option value="all">All</option>
-                                    @foreach($statusall as $stat)
-                                        <option value="{{ $stat->id }}" @if($stat->id == $sid) selected @endif>{{ $stat->status_name }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="input-group-append">
-                                    <span class="input-group-text"><i class="fas fa-filter"></i></span>
-                                </div>
+                    <div class="card-tools mr-3">   
+                        <div class="input-group">    
+                            <select class="form-control select2" id="statusall" required>
+                                <option value="all">All</option>
+                                @foreach($statusall as $stat)
+                                    <option value="{{ $stat->id }}" @if($stat->id == $sid) selected @endif>{{ $stat->status_name }}</option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-filter"></i></span>
                             </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -61,6 +59,9 @@
                                     <th>Fund</th>
                                     <th>Created by.</th>
                                     <th>Date</th>
+                                    @if( $campId != 1)
+                                        <th>Status</th>
+                                    @endif
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -89,22 +90,52 @@
                                         <td>{{ $p->fund }}</td>
                                         <td>{{ $p->fname }} {{ $p->lname }}</td>
                                         <td>{{ $dstart }} TO {{ $dend }}</td>
+                                        @if( $campId != 1)
+                                            <td><span class="badge badge-{{ ($p->pay_status == 'Preparing') ? 'secondary' : '' }}{{ ($p->pay_status == 'Pending') ? 'info' : '' }}{{ ($p->pay_status == 'Under Review') ? 'warning' : '' }}{{ ($p->pay_status == 'Approved') ? 'success' : '' }}"> {{ $p->pay_status }} </spann></td>
+                                        @endif
                                         <td>
                                             @if(auth()->user()->role !== "Payroll Extension")
-                                                @if($p->stat_id == 1)
-                                                <a href="{{ route('payslip', ['payrollID' => $p->id]) }}" class="btn btn-info btn-sm" title="Payslip">
-                                                    <i class="fas fa-file-invoice"></i>
-                                                </a>                                                    
-                                                @else
-                                                <a href="#"
-                                                    class="btn btn-secondary btn-sm" title="Payslip">
-                                                    <i class="fas fa-file-invoice"></i>
+                                                @if($p->pay_status != 'Preparing')
+                                                    @if($campId != 1)
+                                                        <button type="button" value="{{ $p->id }}" data-stat="Preparing" class="btn btn-secondary btn-sm payroll-updatestat">
+                                                            <i class="fas fa-undo"></i>
+                                                        </button>
+                                                    @endif
+                                                @endif
+                                                @if($p->pay_status == 'Under Review' || $p->pay_status == 'Pending')
+                                                    @if($campId != 1)
+                                                        <button type="button" value="{{ $p->id }}" data-stat="Approved" class="btn btn-success btn-sm payroll-updatestat">
+                                                            <i class="fas fa-check"></i> Approve
+                                                        </button>
+                                                    @endif
+                                                @endif
+                                                @if($campId == 1)
+                                                    <a href="{{ ($p->stat_id == 1) ?  route('payslip', ['payrollID' => $p->id]) : '#' }}" class="btn btn-{{ ($p->stat_id == 1) ? 'info' : 'secondary' }} btn-sm" title="Payslip">
+                                                        <i class="fas fa-file-invoice"></i>
+                                                    </a>
+                                                @endif
+                                            @elseif($p->pay_status == 'Preparing')
+                                                <button type="button" value="{{ $p->id }}" data-stat="Pending" class="btn btn-info btn-sm payroll-updatestat">
+                                                    <i class="fas fa-paper-plane"></i> Submit
+                                                </button>
+                                            @endif
+                                            @if(auth()->user()->role == "Payroll Extension")
+                                                <a href="{{ route($routes, ['payrollID' => $p->id, 'statID' => $p->stat_id, 'offID' => 'All']) }}@if($p->stat_id != 1)?s=1 @endif" class="btn btn-info btn-sm" title="View">
+                                                    <i class="fas fa-exclamation-circle"></i>
                                                 </a>
+                                            @else
+                                                @if($campId != 1)
+                                                    @if($p->pay_status != 'Preparing')
+                                                        <a href="{{ route($routes, ['payrollID' => $p->id, 'statID' => $p->stat_id, 'offID' => 'All']) }}@if($p->stat_id != 1)?s=1 @endif" class="btn btn-info btn-sm" title="View">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </a>
+                                                    @endif
+                                                @else
+                                                    <a href="{{ route($routes, ['payrollID' => $p->id, 'statID' => $p->stat_id, 'offID' => 'All']) }}@if($p->stat_id != 1)?s=1 @endif" class="btn btn-info btn-sm" title="View">
+                                                        <i class="fas fa-exclamation-circle"></i>
+                                                    </a>
                                                 @endif
                                             @endif
-                                            <a href="{{ route($routes, ['payrollID' => $p->id, 'statID' => $p->stat_id, 'offID' => 'All']) }}@if($p->stat_id != 1)?s=1 @endif" class="btn btn-info btn-sm" title="View">
-                                                <i class="fas fa-exclamation-circle"></i>
-                                            </a>
                                             <button type="button" value="{{ $p->id }}" class="btn btn-danger btn-sm payroll-delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>

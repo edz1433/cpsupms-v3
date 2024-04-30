@@ -54,11 +54,57 @@ class ModifyController extends Controller
         }
         $modelInstance = 'App\Models\\' . $modeldmody;
         $modifyRecords = $modelInstance::where('payroll_id', $id)->get(); 
+
+        $pfile = PayrollFile::find($id);
+        $empid = $pfile->emp_id;
+        $statid = $pfile->stat_ID;
+
+        $pfileload = PayrollFile::leftJoin('deduction_jos', 'payroll_files.id', '=', 'deduction_jos.payroll_id')
+        ->where('payroll_files.emp_id', $empid)
+        ->where('payroll_files.stat_ID', $statid)
+        ->where('payroll_files.status', 2)
+        ->where('payroll_files.id', '!=', $id)
+        ->get();    
+       
+        $options = [];
+        foreach ($pfileload as $pfl) {
+            $datestart = date('F j', strtotime($pfl->startDate));
+            $dateend = date('j, Y', strtotime($pfl->endDate));
+            
+            $modifyref = $modelInstance::where('payroll_id', $pfl->payroll_id)
+            ->where('action', 'Additionals')
+            ->sum('amount');
+        
+            $modifyded = $modelInstance::where('payroll_id', $pfl->payroll_id)
+            ->where('action', 'Deduction')
+            ->sum('amount');
+        
+            $totaldeduction = $pfl->projects + $pfl->nsca_mpc + $pfl->grad_guarantor + $pfl->tax1 + $pfl->tax2 + $pfl->jo_sss + $pfl->jo_smlf_loan + $pfl->less_late;
+        
+            $datenew = $datestart . '-' . $dateend;
+        
+            $payrollIdNotInModifyJo = !$modelInstance::whereIn('add_to_payroll', [$pfl->id])->exists();
+
+            if ($payrollIdNotInModifyJo) {
+                $options[] = [
+                    'id' => $pfl->id,
+                    'dateRange' => $datenew,
+                    'salary' => round(($pfl->salary_rate / 2) + ($modifyref) - ($totaldeduction + $modifyded), 2)
+                ];
+            }
+        }
+
+        if($statID != 1){
+            
+        }else{
+            $option = null;
+        }
     
         return response()->json([
             'status' => 200,
             'message' => 'Success',
             'data' => $modifyRecords,
+            'options' => $options,
         ]);
     }
 
@@ -132,7 +178,11 @@ class ModifyController extends Controller
             foreach ($columns as $column => $fieldName) {
                 $modify = $modelmodyInstance::firstOrNew(['payroll_id' => $payrollID, 'column' => $column]);
                 $modify->amount = $request->{$fieldName . '_amount'} ?? 0;
+                !empty($request->{$fieldName . '_add_to_payroll'}) ? $modify->add_to_payroll = $request->{$fieldName . '_add_to_payroll'} ?? null : '';
                 $modify->save();
+                
+
+                // dd($request->{$fieldName . '_add_to_payroll'});
 
                 $modelmodyInstance::where(['pay_id' => $payrollID1, 'column' => $column])
                 ->update([
