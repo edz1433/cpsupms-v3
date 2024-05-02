@@ -146,9 +146,19 @@ class PayrollController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
+        $lastPayroll = Payroll::where('campus_id', $campID)
+                           ->where('stat_id', $request->input('statName'))
+                           ->orderBy('id', 'desc')
+                           ->first();
+
+        $lastFormNum = $lastPayroll ? substr($lastPayroll->form_num, -7) : 0;
+
+        $formNum = 'KAB-0' . $request->input('statName') . '-' . str_pad($lastFormNum + 1, 7, '0', STR_PAD_LEFT);
+
         // try {
             //Insert data into database 
             $payroll = Payroll::create([
+                'form_num' => $formNum,
                 'stat_id' => $request->input('statName'),
                 'campus_id' => $request->input('campID'),
                 'number_days' => $request->input('number_days'),

@@ -53,6 +53,7 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
+                                    <th>Form #</th>
                                     <th>Campus</th>
                                     <th>Employee Status</th>
                                     <th>Type</th>
@@ -84,6 +85,7 @@
                                     @endphp
                                     <tr id="tr-{{ $p->id }}">
                                         <td>{{ $idd++ }}</td>
+                                        <td>{{ $p->form_num }}</td>
                                         <td>{{ $p->campus_name }}</td>
                                         <td>{{ $p->status_name }}</td>
                                         <td>{{ ($p->jo_type == 2) ? 'Daily Basis' : 'Monthly Basis'}}</td>
@@ -125,7 +127,7 @@
                                                 </a>
                                             @else
                                                 @if($campId != 1)
-                                                    @if($p->pay_status != 'Preparing')
+                                                    @if($p->pay_status != 'Preparing' )
                                                         <a href="{{ route($routes, ['payrollID' => $p->id, 'statID' => $p->stat_id, 'offID' => 'All']) }}@if($p->stat_id != 1)?s=1 @endif" class="btn btn-info btn-sm" title="View">
                                                             <i class="fas fa-exclamation-circle"></i>
                                                         </a>
