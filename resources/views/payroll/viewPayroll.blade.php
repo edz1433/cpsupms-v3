@@ -99,9 +99,11 @@
                                             @if(auth()->user()->role !== "Payroll Extension")
                                                 @if($p->pay_status != 'Preparing')
                                                     @if($campId != 1)
+                                                        @if(!in_array($p->campus_id, [1, 2, 6, 10]))
                                                         <button type="button" value="{{ $p->id }}" data-stat="Preparing" class="btn btn-secondary btn-sm payroll-updatestat">
                                                             <i class="fas fa-undo"></i>
                                                         </button>
+                                                        @endif
                                                     @endif
                                                 @endif
                                                 @if($p->pay_status == 'Under Review' || $p->pay_status == 'Pending')
@@ -127,7 +129,7 @@
                                                 </a>
                                             @else
                                                 @if($campId != 1)
-                                                    @if($p->pay_status != 'Preparing' )
+                                                    @if($p->pay_status != 'Preparing')
                                                         <a href="{{ route($routes, ['payrollID' => $p->id, 'statID' => $p->stat_id, 'offID' => 'All']) }}@if($p->stat_id != 1)?s=1 @endif" class="btn btn-info btn-sm" title="View">
                                                             <i class="fas fa-exclamation-circle"></i>
                                                         </a>

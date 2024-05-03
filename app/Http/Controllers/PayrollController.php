@@ -167,6 +167,7 @@ class PayrollController extends Controller
                 'payroll_dateStart' => $request->input('PayrollDateStart'),
                 'payroll_dateEnd' => $request->input('PayrollDateEnd'),
                 'user_id' => $userid,
+                'pay_status' => (in_array($request->input('campID'), [1, 2, 6, 10])) ? 'Approved' : 'Preparing',
             ]);
 
             $payrollID =$payroll->id;
