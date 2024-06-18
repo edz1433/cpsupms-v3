@@ -432,7 +432,7 @@ class PayrollController extends Controller
             $firstHalfday = $start->format('j') .'-'. $middle->format('j, Y');
             $secondHalfday = $middle->modify('+1 day')->format('j') .'-'. $end->format('j, Y');
 
-            
+          
 
             $page = ($statID == 1) ? "storepayroll" : ($statID == 2 ? "storepayroll_full_partime" : ($statID == 3 ? "storepayroll_partime_jo" : ($statID == 4 ? ($payroll->jo_type == 1) ? "storepayroll_jo" : 'storepayroll_jo1' : '')));
     
@@ -448,6 +448,7 @@ class PayrollController extends Controller
                     $payrollstat->save();
                 }
             }
+
             else{
                 if(auth()->user()->campus_id != $campId){
                     return redirect()->route('dashboard')->with('error1', 'You do not have permission to access this page');

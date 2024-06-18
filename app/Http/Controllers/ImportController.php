@@ -55,7 +55,7 @@ class ImportController extends Controller
         $endDate = $payroll->payroll_dateEnd;
         $number_hours=$request->number_hours;
         $empid = $request->emp_ID;
-
+        $type = $payroll->jo_type;
         $setrlip = $setph = $setph80 = $setph100 = $settax1 = $settax2 = null;
 
         if ($statID == 1) {
@@ -84,7 +84,7 @@ class ImportController extends Controller
             $settax1 = $settings['settingjotax1']->percent;
             $settax2 = $settings['settingjotax2']->percent;
         }
-
+        
         $modelInstance = 'App\Models\\' . $modeldeduct;
         $modelInstance1 = 'App\Models\\' . $modelmodify;
 
@@ -118,8 +118,14 @@ class ImportController extends Controller
             }
             
             if($statID == 4){
-                $salary = $employees->emp_salary;
-                $earn = ($number_hours == 0) ? '0.00' : $salary / 2;
+                if($type == 1){
+                    $salary = $employees->emp_salary;
+                    $earn = ($number_hours == 0) ? '0.00' : $salary / 2;
+                }else{
+                    $salary = $employees->emp_salary;
+                    $earn = $employees->emp_salary * $number_hours;
+                }
+
                 $tax1 = round($earn * $settax1, 2);
             }
 
