@@ -209,7 +209,7 @@
                     $projects = $data->projects;
                     $jo_sss = $data->jo_sss;
                     $jo_smlf_loan = $data->jo_smlf_loan;
-                    $grossincome = $data->salary_rate * $data->number_hours;
+                    $grossincome = $data->salary_rate;
                     
                     $totaldeduction = $projects + $nsca_mpc + $grad_guarantor + $tax1 + $tax2 + $jo_sss + $jo_smlf_loan;
                     $earnperiod = $grossincome;

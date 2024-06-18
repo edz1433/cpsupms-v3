@@ -121,14 +121,15 @@ class ImportController extends Controller
                 if($type == 1){
                     $salary = $employees->emp_salary;
                     $earn = ($number_hours == 0) ? '0.00' : $salary / 2;
-                }else{
+                }
+                if($type == 2){
                     $salary = $employees->emp_salary;
                     $earn = $employees->emp_salary * $number_hours;
                 }
-
                 $tax1 = round($earn * $settax1, 2);
             }
 
+            // dd();
             $existing_record = PayrollFile::where('payroll_ID', $payrollID)
             ->where('emp_id', $request->emp_ID)
             ->where('camp_ID', $campID)
@@ -146,7 +147,7 @@ class ImportController extends Controller
                 'emp_id' => $request->emp_ID,
                 'emp_pos' => $employees->position,
                 'sg' => $employees->sg_step,
-                'salary_rate' => $salary,
+                'salary_rate' => ($statID == 4 && $type == 2) ? $earn : $salary,
                 'number_hours' => $number_hours,
                 'startDate' => $startDate,
                 'endDate' => $endDate,

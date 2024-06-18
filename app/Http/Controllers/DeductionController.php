@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PayrollFile; 
+use App\Models\Payroll; 
 use App\Models\Deduction;
 use App\Models\DeductionJo;
 use App\Models\DeductionPartimeJo;
@@ -90,6 +91,8 @@ class DeductionController extends Controller
         $cat = $request->cat;
         $id = $request->payroll_id;
         $payroll = PayrollFile::find($id);
+        $pay = Payroll::find($payroll->payroll_ID);
+        $type = $pay->jo_type;
         $statID = $payroll->stat_ID;
         $emp_id = $payroll->emp_id;
         $employee = Employee::where('emp_ID', $emp_id)->first();
@@ -187,7 +190,7 @@ class DeductionController extends Controller
         }
 
         else{
-            $emp_salary = ($statID == 3) ? ($emp_salary * $payroll->number_hours) : (($statID == 2) ? $emp_salary * $payroll->number_hours : ($payroll->salary_rate / 2));           
+            $emp_salary = ($statID == 3) ? ($emp_salary * $payroll->number_hours) : (($statID == 2) ? ($emp_salary * $payroll->number_hours) : (($statID == 4 && $type == 2) ? $payroll->salary_rate : ($payroll->salary_rate / 2)));           
             $modify = $modelInstance1::where('payroll_id', $id)->where('action', 'Additionals');
             $totaladd = 0;
             if(isset($modify)){
