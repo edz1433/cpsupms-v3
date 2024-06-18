@@ -484,8 +484,8 @@
                       <div style="width: 100%;">CERTIFIED: Funds available in the amount of  <strong style="border-bottom: solid #232629 1px;"> &emsp;&emsp;&emsp;P 
                         {{ number_format(array_sum($grandtotalearnperiod) + $totalSumRef, 2); }}
                       </strong></span></div> <br><br>
-                      <div class="div-signature" style="width: 100%;"><strong>ELFRA B. GETONZO</strong></div>
-                      <div class="div-signature" style="width: 100%;">CPA, Accountant II</div><br>
+                      <div class="div-signature" style="width: 100%;"><strong>ELFRA B. GETONZO, CPA</strong></div>
+                      <div class="div-signature" style="width: 100%;">Accountant II</div><br>
                       <div style="width: 100%;">PREPARED BY:</div><br>
                       <div class="div-signature" style="width: 100%;"><strong>CHRISTINE V. TAGUBILIN</strong></div>
                       <div class="div-signature" style="width: 100%;">Admin Aide III-Payroll In-Charge</div><br>
