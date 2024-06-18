@@ -389,7 +389,7 @@
                     </td>
                     <td>
                       <span style="width:100%; text-align: left; float: right;">
-                        {{ ($payroll->fund == "Yearbook") ? '29999990 00' : $code->wages_code }} Labor and Wages<br>
+                        {{ ($payroll->fund == "Yearbook") ? '29999990 00 Other Payables' : $code->wages_code.' Labor and Wages' }} <br>
                         {{ $code->bir_code }} Due to BIR<br>
                         @if($sumjosss > 0) {{ $code->otherpayable_code }} Other Payables (SSS) <br>@endif
                         @if($sumjosmlfloan > 0){{ $code->otherpayable_code }} Other Payables (SMLF Loan) <br>@endif
