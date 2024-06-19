@@ -7,6 +7,7 @@ use App\Models\Deduction;
 use App\Models\DeductionJo;
 use App\Models\DeductionPartimeJo;
 use App\Models\PayrollFile;
+use App\Models\Payroll; 
 use App\Models\Modify;
 use App\Models\ModifyJo;
 use App\Models\ModifyPartimeJo;
@@ -191,12 +192,16 @@ class ModifyController extends Controller
                 ]);
             }            
 
-            $deduction = $modeldedInstance::where('payroll_id', $payrollID)->first();
-            $tax2 = $deduction->tax2;
+                $deduction = $modeldedInstance::where('payroll_id', $payrollID)->first();
+                $dedtax2 = $deduction->tax2;
   
                 $pfile = PayrollFile::find($payrollID);
-    
-                $salary = ($pfile->stat_ID == 3) ? ($pfile->salary_rate * $pfile->number_hours) : ($pfile->salary_rate / 2);                
+                
+                $pay = Payroll::find($pfile->payroll_ID);
+                $type = $pay->jo_type;
+ 
+                $salary = ($pfile->stat_ID == 3) ? ($pfile->salary_rate * $pfile->number_hours) : (($pfile->stat_ID == 4 && $type == 2) ? $pfile->salary_rate : ($pfile->salary_rate / 2));   
+                
                 $modify = $modelmodyInstance::where('payroll_id', $payrollID)->where('action', 'Additionals');
 
                 $totaladd = $modify->sum('amount');
@@ -205,10 +210,11 @@ class ModifyController extends Controller
 
                 $tax1 = round($earn * $settax1, 2);
                 $tax2 = round($earn * $settax2, 2);
-
+                ($dedtax2 >= 1) ? $tax2_am = $tax2 : $tax2_am = '0.00';
+                // dd($dedtax2);
                 $modeldedInstance::where('payroll_id', $payrollID)->update([
                     'tax1' => $tax1,
-                    'tax2' => $tax2,
+                    'tax2' => $tax2_am,
                 ]);
         }
         
