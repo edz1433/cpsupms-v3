@@ -812,7 +812,7 @@ class PayrollController extends Controller
             if ($datas->isEmpty()) {
                 return back()->with('error', 'No data found.');
             }
-        
+            
             $datas = $datas->all(); 
             $customPaper = array(0, 0, 612, 1008); 
             if($statID == 1){
@@ -832,9 +832,9 @@ class PayrollController extends Controller
             else{
                 $viewTemplate = ($statID == 4) ? $viewTemplate = $payroll->jo_type == 1 ? 'payroll.pdf_payrollform_jo' : 'payroll.pdf_payrollform_jo1' : (($statID == 2) ? 'payroll.pdf_payrollform_partime' : '');
 
-                if($statID == 2 &&  $offid == 'All'){
-                    return redirect()->back()->with('error', 'Select Office/Department');
-                }
+                // if($statID == 2 &&  $offid == 'All'){
+                //     return redirect()->back()->with('error', 'Select Office/Department');
+                // }
 
                 $pdf = \PDF::loadView($viewTemplate, compact('datas', 'firstHalf', 'secondHalf', 'code', 'modify1', 'pid', 'offid', 'campusname', 'numdays', 'payroll'))->setPaper($customPaper, 'landscape');
 
