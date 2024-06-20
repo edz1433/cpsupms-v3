@@ -362,7 +362,7 @@
                       <div class="div-signature" style="width: 100%;"><strong>HENRY c. BOLINAS, Ph.D.</strong></div>
                       <div class="div-signature" style="width: 100%;">Chief Administartive Officer</div><br>
                       <div style="width: 100%;">CERTIFIED: Funds available in the amount of  <strong style="border-bottom: solid #232629 1px;"> &emsp;&emsp;&emsp;P {{ number_format(($totalearnperiod + $modcoltotalrow) - ($totallate + $totalabsences),2)}}</strong></span></div> <br><br>
-                      <div class="div-signature" style="width: 100%;"><strong>ELFRA B. GETONZO, CPA</strong></div>
+                      <div class="div-signature" style="width: 100%;"><strong>ERFA B. GETONZO, CPA</strong></div>
                       <div class="div-signature" style="width: 100%;">Accountant II</div><br>
                       <div style="width: 100%;">PREPARED BY:</div><br>
                       <div class="div-signature" style="width: 100%;"><strong>CHRISTINE V. TAGUBILIN</strong></div>
