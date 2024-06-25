@@ -438,6 +438,11 @@
                       <td>{{ number_format(array_sum($grandtotalearnperiod),2) }}</td>
                       <td>{{ number_format(array_sum($grandtotaltax1),2) }}</td>
                       <td>{{ number_format(array_sum($grandtotaltax2),2) }}</td>
+
+                      @if($sumjosss > 0)<td>{{ number_format(array_sum($grandtotaljoss), 2); }}</td>@endif
+                      @if($sumprojects > 0)<td>{{ number_format(array_sum($grandtotalprojects), 2); }}</td>@endif
+                      @if($sumnscampc > 0)<td>{{ number_format(array_sum($grandtotalnscampc), 2); }}</td>@endif
+                      @if($sumgradscl > 0)<td>{{ number_format(array_sum($grandtotalgrad_guarantor), 2); }}</td>@endif
                       
                       @if($column1sumded > 0)
                       <td>{{ number_format($column1sumded, 2)  }}</td>
