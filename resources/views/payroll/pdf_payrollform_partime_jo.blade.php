@@ -77,6 +77,9 @@
   <body>
     <body>
       <div class="container">
+        <div style="float-rigt" style="font-size: 10px;">
+          FORM #: {{ $payroll->form_num }}
+        </div>
         <div class="row">
           <div class="col">
             @php 

@@ -56,7 +56,7 @@ th{
                                             $pid = 2;
                                         }
                                     @endphp
-                                    <a href="{{ route("pdf", ['payrollID' => $payrollID, 'statID' => $statID, 'pid' => $pid, 'offid' => $offID, 'stat' => 1]) }}" target="_blank">
+                                    <a href="{{ route("pdf", ['payrollID' => $payrollID, 'statID' => $statID, 'pid' => '3', 'offid' => $offID, 'stat' => 3]) }}" target="_blank">
                                         <button id="open-pdf" target="_blank"  class="btn btn-info btn-sm">
                                             <i class="fas fa-print"></i> Print Payroll
                                         </button>

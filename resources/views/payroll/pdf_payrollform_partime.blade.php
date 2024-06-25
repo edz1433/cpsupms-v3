@@ -2,13 +2,13 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Payroll Form</title>
+    <title>Payroll Form </title>
     <style>
       /* Default table styling */
       .table {
         width: 100%;
         max-width: 100%;
-        margin-bottom: 1rem; 
+        margin-bottom: 1rem;
         background-color: transparent;
         border-collapse: collapse;
         font-size: 9px;
@@ -77,120 +77,159 @@
   <body>
     <body>
       <div class="container">
+        <div style="float-rigt" style="font-size: 10px;">
+          FORM #: {{ $payroll->form_num }}
+        </div>
         <div class="row">
           <div class="col">
-            <div class="table-responsive">
-              @php
-                $modifyth = array_fill_keys(['Column1', 'Column2', 'Column3', 'Column4', 'Column5'], 0);
+            @php 
+                $modifythRefcount = 0;
+                $modifythDedcount = 0;
+                $totalAddAmount = 0;
+                $totalDedAmount = 0;
 
+                $sumtax1 = array_sum(array_column($datas, 'tax1'));
+                $sumtax2 = array_sum(array_column($datas, 'tax2'));
+                $sumjosss = array_sum(array_column($datas, 'jo_sss'));
                 $sumprojects = array_sum(array_column($datas, 'projects'));
                 $sumnscampc = array_sum(array_column($datas, 'nsca_mpc'));
                 $sumgradscl = array_sum(array_column($datas, 'grad_guarantor'));
-              @endphp
+            @endphp
+            @foreach ($tablemodifyRef as $th)
+                @if ($th->totalAmount > 0)
+                        @php
+                            $modifythRefcount++;
+                        @endphp
+                @endif
+            @endforeach
+            @foreach ($tablemodifyDed as $th)
+                @if ($th->totalAmount > 0)
+                    @php
+                        $modifythDedcount++;
+                    @endphp
+                @endif
+            @endforeach
+            @foreach ($tablemodifyRef as $thref)
+                @if ($thref->action === 'Additionals')
+                    @php
+                        $totalAddAmount += $thref->amount;
+                    @endphp
+                @endif
+            @endforeach
+                @foreach ($tablemodifyRef as $thded)
+                @if ($thded->action === 'Deduction')
+                    @php
+                        $totalDedAmount += $thded->amount;
+                    @endphp
+                @endif
+            @endforeach
+            @php
+                $totalSumRef = collect($datas)->sum('sumRef');
+                $totalSumDed = collect($datas)->sum('sumDed');
+            @endphp
+            @php
+                $column1sumref = array_sum(array_column($datas, 'column1sumRef'));
+                $column2sumref = array_sum(array_column($datas, 'column2sumRef'));
+                $column3sumref= array_sum(array_column($datas, 'column3sumRef'));
+                $column4sumref = array_sum(array_column($datas, 'column4sumRef'));
+                $column5sumref = array_sum(array_column($datas, 'column5sumRef'));
 
-              @foreach ($modify1 as $mody)
-                @if ($mody->action == 'Additionals' && array_key_exists($mody->column, $modifyth))
-                    @php
-                        $modifyth[$mody->column] += $mody->amount;
-                        $modifyth[$mody->column] = ($modifyth[$mody->column] >= 1) ? 1 : 0;
-                    @endphp
-                @endif
-                @if ($mody->action == 'Deduction' && array_key_exists($mody->column, $modifyth))
-                    @php
-                        $modifyth[$mody->column] += $mody->amount;
-                        $modifyth[$mody->column] = ($modifyth[$mody->column] >= 1) ? 1 : 0;
-                    @endphp
-                @endif
-              @endforeach
+                $column1sumded = array_sum(array_column($datas, 'column1sumDed'));
+                $column2sumded = array_sum(array_column($datas, 'column2sumDed'));
+                $column3sumded= array_sum(array_column($datas, 'column3sumDed'));
+                $column4sumded = array_sum(array_column($datas, 'column4sumDed'));
+                $column5sumded = array_sum(array_column($datas, 'column5sumDed'));
+
+                $no = 1;
+                $uniqueGroupByValues = array_unique(array_column($datas, 'offid', 'office_name')); 
+                $totalrowEarnperiod = 0;
+                $totalGroups = count($uniqueGroupByValues);
+                $currentGroupIndex = 0;            
+            @endphp
+            @foreach ($uniqueGroupByValues as $officeAbbr => $groupValue)
+            @php
+                $rowcolamountrefsub1 = 0;
+                $rowcolamountrefsub2 = 0;
+                $rowcolamountrefsub3 = 0;
+                $rowcolamountrefsub4 = 0;
+                $rowcolamountrefsub5 = 0;
+
+                $rowcolamountdedsub1 = 0;
+                $rowcolamountdedsub2 = 0;
+                $rowcolamountdedsub3 = 0;
+                $rowcolamountdedsub4 = 0;
+                $rowcolamountdedsub5 = 0;
+
+                $grouptotalRef = 0; 
+                $grouptotalDed = 0;
+
+                $rowEarnSum = 0;
+                $rowEarnsArray = [];
+            @endphp
+            <div class="table-responsive">
               <table class="table table-striped table-bordered landscape-table" style="table-layout: auto; width: 100%; max-width: none;">
                 <thead>
-                  <tr>{{ $sumnscampc }}
-                    <th colspan="{{ 13 + array_sum($modifyth) + ($sumprojects > 0 ? 1 : 0)+ ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="border-bottom: none;">CENTRAL PHILIPPINES STAT UNIVERSITY<br>GENERAL PAYROLL<br><br>
-                      <strong>{{ $datas[0]->office_name }}</strong><br>{{$pid == 1 ? $firstHalf : $secondHalf}}</th>
+                  <tr>
+                    <th colspan="{{ 13 + $modifythRefcount + $modifythDedcount + ($sumjosss > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0)+ ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="border-bottom: none;"><strong style="font-size: 12px;">CENTRAL PHILIPPINES STATE UNIVERSITY</strong><br>GENERAL PAYROLL<br><br><strong>{{ $officeAbbr }}</strong><br>{{$pid == 1 ? $firstHalf : $secondHalf}}</th>
                   </tr>
 				          <tr>
-                    <th colspan="{{ 13 + array_sum($modifyth) + ($sumprojects > 0 ? 1 : 0)+ ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0)}}" style="text-align: left; border-top: none;">We acknowledge receipt of the sum shown opposite our names as full compensation for services rendered for the period stated</th>
+                    <th colspan="{{ 13 + $modifythRefcount + $modifythDedcount + ($sumjosss > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0)+ ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0)}}" style="text-align: left; border-top: none;">We acknowledge receipt of the sum shown opposite our names as full compensation for services rendered for the period stated</th>
                   </tr>
+                  <tr>
                     <th width="3%">NO.</th>
                     <th width="10%">Name</th>
                     <th width="7%">Designation</th>
                     <th width="7%">Monthly Salary</th>
                     <th width="5%">No. of Days per month</th>
                     <th width="5%">Rate per Day</th>
-                    @php
-                    $columns_ful = ['Column1' => 0, 'Column2' => 0, 'Column3' => 0, 'Column4' => 0, 'Column5' => 0];
-                    $columns_fulded = ['Column1' => 0, 'Column2' => 0, 'Column3' => 0, 'Column4' => 0, 'Column5' => 0];
-                    @endphp
-                    
-                    @foreach ($modify1 as $mody)
-                        @if ($mody->action === 'Additionals' && array_key_exists($mody->column, $columns_ful))
-                            @php
-                                $columns_ful[$mody->column] += $mody->amount;
-                            @endphp
-                        @endif
-                        @if ($mody->action === 'Deduction' && array_key_exists($mody->column, $columns_ful))
-                            @php
-                                $columns_fulded[$mody->column] += $mody->amount;
-                            @endphp
+  
+                    @foreach ($tablemodifyRef as $thref)
+                        @if ($thref->totalAmount > 0)
+                            <th width="5%">{{ $thref->label }}</th>
                         @endif
                     @endforeach
-                    
-                    @foreach ($columns_ful as $column => $total)
-                        @if ($total != 0.00)
-                        @foreach ($modify1 as $mody)
-                            @if ($mody->column === $column)
-                                @php
-                                    $label = preg_replace('/(January|February|March|April|May|June|July|August|September|October|November|December)/', '$1<br>', $mody->label);
-                                @endphp
-                                <th width="5%">{!! $label !!}</th>
-                                @break
-                            @endif
-                        @endforeach
-                        @endif
-                    @endforeach                   
+                                  
                     <th width="5%">Deduction Late</th>
                     <th width="5%">Earned for the period</th>
                     <th width="5%">TAX 3%</th>
                     <th width="5%">TAX 2%</th>
-                    @foreach ($columns_fulded as $column => $total)
-                        @if ($total != 0.00)
-                            @foreach ($modify1 as $mody)
-                                @if ($mody->column === $column)
-                                    @php
-                                        $label = preg_replace('/(January|February|March|April|May|June|July|August|September|October|November|December)/', '$1<br>', $mody->label);
-                                    @endphp
-                                    <th>{!! $label !!}</th>
-                                    @break
-                                @endif
-                            @endforeach
-                        @endif
-                    @endforeach   
+
+                    @if($sumjosss > 0)<th width="5%">SSS</th>@endif
                     @if($sumprojects > 0)<th width="5%">Project</th>@endif
                     @if($sumnscampc > 0)<th width="5%">NSCA MPC</th>@endif
                     @if($sumgradscl > 0)<th width="5%">Graduate School</th>@endif
+
+                    @foreach ($tablemodifyDed as $thded)
+                        @if ($thded->totalAmount > 0)
+                            <th width="5.75%">{{ $thded->label }}</th>
+                        @endif
+                    @endforeach
+
                     <th width="5%">Total<br>Deductions</th>
                     <th width="5%">Net<br>Ammount<br>Received</th>
                     <th width="5%">Signature</th>
-                </tr>
+                  </tr>
                 </thead>
                 <tbody>
                   @php
                   $no = 1;
+                  $totalhours = 0;
                   $totalgrossincome = 0;
                   $totalalldeduction = 0;
-                  $totalgrossincome1st = 0;
                   $totalabsences = 0;
                   $totallate = 0;
                   $totaltax1 = 0;
                   $totaltax2 = 0;
                   $totalnsca_mpc = 0;
                   $totalprojects = 0;
+                  $totaljo_sss = 0;
                   $totalgrad_guarantor = 0;
                   $totalearnperiod = 0;
+
+
                   @endphp
-                
                   @foreach ($datas as $data)
-                  @if($offid != 'All' ? $data->offid == $offid : $data->offid != 0) 
+                    @if ($data->offid === $groupValue)
                     @php
                     $saltype = $data->sal_type;
 
@@ -201,13 +240,16 @@
                     $nsca_mpc = $data->nsca_mpc; 
                     $grad_guarantor = $data->grad_guarantor;
                     $projects = $data->projects;
+                    $jo_sss = $data->jo_sss;
 
                     $salary = $data->salary_rate;
                     
-                    $totaldeduction = $projects + $nsca_mpc + $grad_guarantor + $tax1 + $tax2;
-                    $earnperiod = $salary * $data->number_hours;
+                    $totaldeduction = $projects + $nsca_mpc + $grad_guarantor + $tax1 + $tax2 + $jo_sss;
+                    $earnperiod = round(($salary * $data->number_hours) - ($absent + $late),2);
                     $netamountrec = ($earnperiod) - $totaldeduction;
 
+
+                    $totalhours += $data->number_hours;
                     $totalgrossincome += $salary;
                     $totalalldeduction += $totaldeduction;
                     $totalabsences += $absent;
@@ -217,6 +259,7 @@
                     $totaltax2 += $tax2;
                     $totalnsca_mpc += $nsca_mpc;
                     $totalprojects += $projects;
+                    $totaljo_sss += $jo_sss;
                     $totalgrad_guarantor += $grad_guarantor;
 
                     $rowEarnSum = 0;
@@ -233,117 +276,194 @@
                     $rowEarnSum = array_sum($rowEarnsArray);
                     
                     $halftotal = round($rowEarnSum, 2);
+
+                    $rowcolamountrefsub1 += $data->rowcolamountref1;
+                    $rowcolamountrefsub2 += $data->rowcolamountref2;
+                    $rowcolamountrefsub3 += $data->rowcolamountref3;
+                    $rowcolamountrefsub4 += $data->rowcolamountref4;
+                    $rowcolamountrefsub5 += $data->rowcolamountref5;
+
+                    $rowcolamountdedsub1 += $data->rowcolamountded1;
+                    $rowcolamountdedsub2 += $data->rowcolamountded2;
+                    $rowcolamountdedsub3 += $data->rowcolamountded3;
+                    $rowcolamountdedsub4 += $data->rowcolamountded4;
+                    $rowcolamountdedsub5 += $data->rowcolamountded5;
+
+                    $grouptotalRef += $data->sumRef;
+                    $grouptotalDed += $data->sumDed;
                     
                     @endphp
                     <tr>
                       <td style="text-align: center">{{ $no++ }}</td>
-                      <td>{{ $data->lname }} {{ $data->fname }}</td>
+                      <td>{{ ucwords(strtolower($data->lname)) }} {{ ucwords(strtolower($data->fname)) }}</td>
                       <td>{{ $data->emp_pos }}</td>
-                      <td>{{ number_format(round($salary * $numdays)) }}</td>
+                      <td></td>
                       <td>{{ number_format($data->number_hours, 2) }}</td>
                       <td>{{ number_format($salary, 2) }}</td>
-                      @php
-                        $totalfulAdd = 0; 
-                        $totalfulDed = 0;
-                      @endphp
-                      
-                      @foreach ($modify1 as $mody)
-                          @if ($mody->pay_id == $data->payroll_ID && $mody->action == 'Additionals' && array_key_exists($mody->column, $columns_ful))
-                              @php
-                                  $columns_ful[$mody->column] += $mody->amount;
-                              @endphp
-                          @endif
-                          @if ($mody->pay_id == $data->payroll_ID && $mody->action == 'Deduction' && array_key_exists($mody->column, $columns_fulded))
-                              @php
-                                  $columns_fulded[$mody->column] += $mody->amount;
-                              @endphp
-                          @endif
-                      @endforeach
-                      
-                      @foreach ($modify1 as $mody)
-                          @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_ful))
-                              @php
-                                  $modjoTotalAmount = $columns_ful[$mody->column];
-                              @endphp
-                              @if ($modjoTotalAmount != 0.00)
-                                  <td>{{ $mody->action === 'Additionals' ? number_format($mody->amount, 2) : '0.00' }}</td>
-                                  @if ($mody->action === 'Additionals')
-                                      @php
-                                          $totalfulAdd += $mody->amount;
-                                          $modcoltotal[$mody->column] = isset($modcoltotal[$mody->column]) ? $modcoltotal[$mody->column] + $mody->amount : $mody->amount;
-                                      @endphp
-                                  @endif
-                              @endif
-                          @endif
-                      @endforeach
-                      <td>{{ number_format($data->less_late, 2) }}</td>
-                      <td>{{ number_format(($earnperiod + $totalfulAdd) - ($absent + $late), 2) }}</td>
-                      <td>{{ number_format($tax1, 2) }}</td>
-                      <td>{{ number_format($tax2, 2) }}</td>
-                      @foreach ($modify1 as $mody)
-                          @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_fulded))
-                              @php
-                                  $modjoTotalAmount = $columns_fulded[$mody->column];
-                              @endphp
-                              @if ($modjoTotalAmount != 0.00)
-                                  <td>{{ $mody->action === 'Deduction' ? number_format($mody->amount, 2) : '0.00' }}</td>
-                                  @if ($mody->action === 'Deduction')
-                                      @php
-                                          $totalfulDed += $mody->amount;
-                                          $modcoltotalful[$mody->column] = isset($modcoltotalful[$mody->column]) ? $modcoltotalful[$mody->column] + $mody->amount : $mody->amount;
-                                      @endphp
-                                  @endif
-                              @endif
-                          @endif
-                      @endforeach
-                      @if($sumprojects > 0)<td>{{ number_format($projects, 2) }}</td>@endif
-                      @if($sumnscampc > 0)<td>{{ number_format($nsca_mpc, 2) }}</td>@endif
-                      @if($sumgradscl > 0)<td>{{ number_format($grad_guarantor, 2) }}</td>@endif
-                      <td>{{ number_format($totaldeduction + $totalfulDed, 2) }}</td>
-                      <td>{{ number_format(($earnperiod + $totalfulAdd) - ($absent + $late) - ($totaldeduction + $totalfulDed), 2) }}</td>
-                      <td></td>
-                      </tr>
-                    @endif
-                  @endforeach 
-                </tbody>   
-                <tfoot>
-                  <tr>
-                    <td colspan="5"></td>
-                    @php $modcoltotalrow = 0; $modcoltotalrowded = 0; @endphp
-                    @if(isset($modcoltotal))
-                    @foreach ($columns_ful as $column => $totalAmount)
-                        @if (array_key_exists($column, $modcoltotal) && $modcoltotal[$column] > 0)
-                            <td><strong>{{ number_format($modcoltotal[$column], 2) }}</strong></td>
-                            @php
-                                $modcoltotalrow += $modcoltotal[$column];
-                            @endphp
+
+                        @if($column1sumref > 0)
+                        <td>{{ ($data->rowcolamountref1 > 0) ? number_format($data->rowcolamountref1, 2) : ''  }} </td>
                         @endif
-                    @endforeach
+                        @if($column2sumref > 0)
+                        <td>{{ ($data->rowcolamountref2 > 0) ? number_format($data->rowcolamountref2, 2) : '' }}</td>
+                        @endif
+                        @if($column3sumref > 0)
+                        <td>{{ ($data->rowcolamountref3 > 0) ? number_format($data->rowcolamountref3, 2) : '' }}</td>
+                        @endif
+                        @if($column4sumref > 0)
+                        <td>{{ ($data->rowcolamountref4 > 0) ? number_format($data->rowcolamountref4, 2) : '' }}</td>
+                        @endif
+                        @if($column5sumref > 0)
+                        <td>{{ ($data->rowcolamountref5 > 0) ? number_format($data->rowcolamountref5, 2) : '' }}</td>
+                        @endif
+
+                        <td>{{ number_format($data->less_late, 2) }}</td>
+                        <td>{{ number_format(($earnperiod + $data->sumRef), 2) }}</td>
+                        <td>{{ number_format($tax1, 2) }}</td>
+                        <td>{{ number_format($tax2, 2) }}</td>
+
+                        @if($sumjosss > 0)<td>{{ ($jo_sss > 0) ? number_format($jo_sss, 2) : '' }}</td> @endif
+                        @if($sumprojects > 0)<td>{{ ($projects > 0) ? number_format($projects, 2) : '' }}</td>@endif
+                        @if($sumnscampc > 0) <td>{{ ($nsca_mpc > 0) ? number_format($nsca_mpc, 2) : '' }}</td>@endif
+                        @if($sumgradscl > 0) <td>{{ ($grad_guarantor > 0) ? number_format($grad_guarantor, 2) : '' }}</td>@endif
+
+                        @if($column1sumded > 0)
+                        <td>{{ ($data->rowcolamountded1 > 0) ? number_format($data->rowcolamountded1, 2) : ''  }}</td>
+                        @endif
+                        @if($column2sumded > 0)
+                        <td>{{ ($data->rowcolamountded2 > 0) ? number_format($data->rowcolamountded2, 2) : '' }}</td>
+                        @endif
+                        @if($column3sumded > 0)
+                        <td>{{ ($data->rowcolamountded3 > 0) ? number_format($data->rowcolamountded3, 2) : '' }}</td>
+                        @endif
+                        @if($column4sumded > 0)
+                        <td>{{ ($data->rowcolamountded4 > 0) ? number_format($data->rowcolamountded4, 2) : '' }}</td>
+                        @endif
+                        @if($column5sumded > 0)
+                        <td>{{ ($data->rowcolamountded5 > 0) ? number_format($data->rowcolamountded5, 2) : '' }}</td>
+                        @endif
+
+                        <td>{{ number_format($totaldeduction, 2) }}</td>
+                        <td>{{ number_format(($earnperiod + $data->sumRef) - ($absent + $late) - ($totaldeduction + $data->sumDed), 2) }}</td>
+                        <td></td>
+                    </tr>
                     @endif
-                    <td><strong>{{ number_format($totalabsences,2) }}</strong></td>
-                    <td><strong>{{ number_format($totallate,2) }}</strong></td>
-                    <td><strong>{{ number_format(($totalearnperiod + $modcoltotalrow) - ($totallate + $totalabsences),2)}}</strong></td>
-                    <td><strong>{{ number_format($totaltax1,2)}}</strong></td>
-                    <td><strong>{{ number_format($totaltax2,2) }}</strong></td>
-                    @if(isset($modcoltotalful))
-                      @foreach ($columns_ful as $column => $totalAmount)
-                          @if (array_key_exists($column, $modcoltotalful) && $modcoltotalful[$column] > 0)
-                              <td><strong>{{ number_format($modcoltotalful[$column], 2) }}</strong></td>
-                              @php
-                                  $modcoltotalrowded += $modcoltotalful[$column];
-                              @endphp
-                          @endif
-                      @endforeach
+                  @endforeach
+                  @php
+                    $grandtotalabsences[] = $totalabsences;
+                    $grandtotallate[] = $totallate;
+                    $grandtotalearnperiod[] =  $totalearnperiod;
+                    $grandtotaltax1[] = $totaltax1;
+                    $grandtotaltax2[] = $totaltax2;
+                    $grandtotalnscampc[] = $totalnsca_mpc;
+                    $grandtotalprojects[] = $totalprojects;
+                    $grandtotaljoss[] = $totaljo_sss;
+                    $grandtotaldeduction[] = $totalalldeduction;
+                    $grandtotalgrad_guarantor[] = $totalgrad_guarantor;
+                  @endphp
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+
+                    @if($column1sumref > 0)
+                        <td>{{ ($rowcolamountrefsub1) ? number_format($rowcolamountrefsub1, 2)  : ''}}</td>
                     @endif
-                    @if($sumprojects > 0)<td><strong>{{ number_format($totalprojects, 2) }}</td></strong>@endif
-                    @if($sumnscampc > 0)<td><strong>{{ number_format($totalnsca_mpc, 2) }}</td></strong>@endif
-                    @if($sumgradscl > 0)<td><strong>{{ number_format($totalgrad_guarantor, 2) }}</td></strong>@endif
-                    <td><strong>{{ number_format($totalalldeduction + $modcoltotalrowded,2) }}</strong></td>
-                    <td><strong>{{ number_format(($totalearnperiod + $modcoltotalrow - $modcoltotalrowded) - ($totallate + $totalabsences) - $totalalldeduction,2) }}</strong></td>
-                    <td></td>  
-                  </tr>  
-                </tfoot>         
+                    @if($column2sumref > 0)
+                        <td>{{ ($rowcolamountrefsub2 > 0) ? number_format($rowcolamountrefsub2, 2) : ''}}</td>
+                    @endif
+                    @if($column3sumref > 0)
+                        <td>{{ ($rowcolamountrefsub3 > 0) ? number_format($rowcolamountrefsub3, 2) : ''}}</td>
+                    @endif
+                    @if($column4sumref > 0)
+                        <td>{{ ($rowcolamountrefsub4 > 0) ? number_format($rowcolamountrefsub4, 2) : ''}}</td>
+                    @endif
+                    @if($column5sumref > 0) 
+                        <td>{{ ($rowcolamountrefsub5 > 0) ? number_format($rowcolamountrefsub5, 2) : ''}}</td>
+                    @endif
+
+                    <td>{{ ($totallate > 0) ? number_format($totallate, 2) : ''}}</td>
+                    <td>{{ ($totalearnperiod > 0) ? number_format($totalearnperiod + $grouptotalRef, 2) : ''}}</td>
+                    <td>{{ ($totaltax1 > 0) ? number_format($totaltax1, 2) : ''}}</td>
+                    <td>{{ ($totaltax2 > 0) ? number_format($totaltax2, 2) : ''}}</td>
+
+                    @if($sumjosss > 0) <td>{{ ($totaljo_sss > 0) ? number_format($totaljo_sss, 2) : ''}}</td>@endif
+                    @if($sumprojects > 0) <td>{{ ($totalprojects > 0) ? number_format($totalprojects, 2) : ''}}</td>@endif
+                    @if($sumnscampc > 0)<td>{{ ($totalnsca_mpc > 0) ? number_format($totalnsca_mpc, 2) : ''}}</td></td>@endif
+                    @if($sumgradscl > 0) <td>{{ ($totalgrad_guarantor > 0) ? number_format($totalgrad_guarantor, 2) : ''}}</td>@endif
+
+                    @if($column1sumded > 0)
+                        <td>{{ ($rowcolamountdedsub1 > 0) ? number_format($rowcolamountdedsub1, 2) : '' }}</td>
+                    @endif
+                    @if($column2sumded > 0)
+                        <td>{{ ($rowcolamountdedsub2 > 0) ? number_format($rowcolamountdedsub2, 2) : '' }}</td>
+                    @endif
+                    @if($column3sumded > 0)
+                        <td>{{ ($rowcolamountdedsub3 > 0) ? number_format($rowcolamountdedsub3, 2) : '' }}</td>
+                    @endif
+                    @if($column4sumded > 0)
+                        <td>{{ ($rowcolamountdedsub4 > 0) ? number_format($rowcolamountdedsub4, 2) : ''}}</td>
+                    @endif
+                    @if($column5sumded > 0) 
+                        <td>{{ ($rowcolamountdedsub5 > 0) ? number_format($rowcolamountdedsub5, 2) : '' }}</td>
+                    @endif
+                    
+                    <td>{{ number_format($totalalldeduction + $grouptotalDed, 2) }}</td>
+                    <td>{{ number_format(($totalearnperiod + $grouptotalRef) - ($totalalldeduction + $grouptotalDed), 2) }}</td>
+                    <td></td>
+                  </tr>
+                  @if ($loop->last)
+                  <tr> 
+                      <td colspan="6"></td>
+                      @if($column1sumref > 0)
+                      <td>{{ number_format($column1sumref, 2)  }}</td>
+                      @endif
+                      @if($column2sumref > 0)
+                      <td>{{ number_format($column2sumref, 2) }}</td>
+                      @endif
+                      @if($column3sumref > 0)
+                      <td>{{ number_format($column3sumref, 2) }}</td>
+                      @endif
+                      @if($column4sumref > 0)
+                      <td>{{ number_format($column4sumref, 2) }}</td>
+                      @endif
+                      @if($column5sumref > 0)
+                      <td>{{ number_format($column5sumref, 2) }}</td>
+                      @endif
+
+                      <td>{{ number_format(array_sum($grandtotallate),2) }}</td>
+                      <td>{{ number_format(array_sum($grandtotalearnperiod),2) }}</td>
+                      <td>{{ number_format(array_sum($grandtotaltax1),2) }}</td>
+                      <td>{{ number_format(array_sum($grandtotaltax2),2) }}</td>
+                      
+                      @if($column1sumded > 0)
+                      <td>{{ number_format($column1sumded, 2)  }}</td>
+                      @endif
+                      @if($column2sumded > 0)
+                      <td>{{ number_format($column2sumded, 2) }}</td>
+                      @endif
+                      @if($column3sumded > 0)
+                      <td>{{ number_format($column3sumded, 2) }}</td>
+                      @endif
+                      @if($column4sumded > 0)
+                      <td>{{ number_format($column4sumded, 2) }}</td>
+                      @endif
+
+                      @if($column5sumded > 0)
+                      <td>{{ number_format($column5sumded, 2) }}</td>
+                      @endif
+
+                      <td>{{ number_format(array_sum($grandtotaldeduction),2) }}</td>
+                      <td>{{ number_format(array_sum($grandtotalearnperiod) - array_sum($grandtotaldeduction),2) }}</td>
+                      <td></td>
+                    </tr>
+                  @endif
+                </tbody>
               </table>
+               @endforeach
               <table class="table table-striped table-bordered landscape-table" style="table-layout: auto; width: 100%; max-width: none;">
                 <tbody class="last-page">
                   <tr>
@@ -359,9 +479,11 @@
                       <div class="div-signature" style="width: 100%;"><strong>FREIA  L. VARGAS, Ph.D.</strong></div>
                       <div class="div-signature" style="width: 100%;">Adminstrative Officer V. HRMO III</div><br>
                       <div>NOTED: </div><br>
-                      <div class="div-signature" style="width: 100%;"><strong>HENRY c. BOLINAS, Ph.D.</strong></div>
+                      <div class="div-signature" style="width: 100%;"><strong>HENRY C. BOLINAS, Ph.D.</strong></div>
                       <div class="div-signature" style="width: 100%;">Chief Administartive Officer</div><br>
-                      <div style="width: 100%;">CERTIFIED: Funds available in the amount of  <strong style="border-bottom: solid #232629 1px;"> &emsp;&emsp;&emsp;P {{ number_format(($totalearnperiod + $modcoltotalrow) - ($totallate + $totalabsences),2)}}</strong></span></div> <br><br>
+                      <div style="width: 100%;">CERTIFIED: Funds available in the amount of  <strong style="border-bottom: solid #232629 1px;"> &emsp;&emsp;&emsp;P 
+                        {{ number_format(array_sum($grandtotalearnperiod) + $totalSumRef, 2); }}
+                      </strong></span></div> <br><br>
                       <div class="div-signature" style="width: 100%;"><strong>ERFA B. GETONZO, CPA</strong></div>
                       <div class="div-signature" style="width: 100%;">Accountant II</div><br>
                       <div style="width: 100%;">PREPARED BY:</div><br>
@@ -370,32 +492,44 @@
                     </td>
                     <td>
                       <span style="width:100%; text-align: left; float: right;">
-                        {{ $code->wages_code }} Labor and Wages<br>
+                        {{ $code->wages_code }} Other Professional Services<br>
                         {{ $code->bir_code }} Due to BIR<br>
+                        @if($sumjosss > 0) {{ $code->otherpayable_code }} Other Payables (SSS) <br>@endif
                         @if($sumprojects > 0){{ $code->otherpayable_code }} Other Payables (Project) <br>@endif
                         @if($sumnscampc > 0){{ $code->otherpayable_code }} Other Payables (NSCA MPC) <br>@endif
                         @if($sumgradscl > 0){{ $code->otherpayable_code }} Other Payables (Graduate School) <br>@endif
-                        @if($modcoltotalrowded > 0) 1030599000 Deductions <br>@endif
+                        @if($totalSumRef > 0) 10305990 00 Other Receivable <br>@endif
                         {{ $code->bank_code }} Cash in Bank-LC, LBP<br>
                       </span>
                     </td>
                       <td>
-                        <span style="width:100%; text-align: left; float: left;">
-                          {{ number_format(($totalearnperiod + $modcoltotalrow - $modcoltotalrowded) - ($totallate + $totalabsences),2)}}
+                        <span style="width:100%; text-align: right; float: left;">
+                          {{ number_format(array_sum($grandtotalearnperiod) + $totalSumRef, 2); }}<br>
+                          @if($sumjosss > 0) <br>@endif
+                          @if($sumprojects > 0)<br>@endif
+                          @if($sumnscampc > 0)<br>@endif
+                          @if($sumgradscl > 0)<br>@endif
+                          @if($totalSumRef > 0)<br>@endif
+                          @if($totalSumRef > 0) <br>@endif
                         </span>
                       </td>
                       <td>
                         <span style="width:100%; text-align: right; float: left;"><br>
-                          {{ number_format($totaltax1 + $totaltax2,2)}}<br>
-                          @if($sumprojects > 0) {{ number_format($sumprojects) }}<br>@endif
-                          @if($sumnscampc > 0) {{ number_format($sumnscampc) }}<br>@endif
-                          @if($sumgradscl > 0) {{ number_format($sumgradscl) }}<br>@endif
-                          @if($modcoltotalrowded > 0) {{ number_format($modcoltotalrowded, 2) }}<br>@endif
-                          {{ number_format(($totalearnperiod + $modcoltotalrow - $modcoltotalrowded) - ($totallate + $totalabsences) - ($totalalldeduction),2) }}
+                          {{ number_format($sumtax1 + $sumtax2,2)}}<br>
+                          @if($sumjosss > 0) {{ number_format($sumjosss), 2 }}<br>@endif
+                          @if($sumprojects > 0) {{ number_format($sumprojects), 2 }}<br>@endif
+                          @if($sumnscampc > 0) {{ number_format($sumnscampc), 2 }}<br>@endif
+                          @if($sumgradscl > 0) {{ number_format($sumgradscl), 2 }}<br>@endif
+                          @if($totalSumDed > 0) {{ number_format($totalSumDed), 2 }} <br>@endif
+                          {{ number_format((array_sum($grandtotalearnperiod) + $totalSumRef) - ($totalSumDed + array_sum($grandtotaldeduction)), 2); }}
                       </td>
                     <td colspan="6">
                       <span style="width:100%; text-align: left; float: left; font-size: 10px;">
-                        <strong><span style="margin-right: 63%;">Approved for Payment:</span></strong>  {{ number_format(($totalearnperiod + $modcoltotalrow - $modcoltotalrowded) - ($totallate + $totalabsences) - $totalalldeduction,2) }}<br><br><br>
+                        <strong><span style="margin-right: 63%;">Approved for Payment:</span></strong>  
+                        <b>
+                          {{ number_format((array_sum($grandtotalearnperiod) + $totalSumRef) - ($totalSumDed + array_sum($grandtotaldeduction)), 2); }}
+                        </b>
+                        <br><br><br>
                         <strong><span style="margin-left: 35%; margin-right: 35%;">ALADINO C. MORACA, Ph.D.</span></strong>
                         <span style="margin-left: 40%; margin-right: 35%;">SUC President II</span><br><br><br>
                         <strong>CERTIFIED</strong>: That each employee whose name appears above has been paid the amount indicated through direct<br>credit to their respective accounts.<br><br><br><br><br><br>
@@ -409,8 +543,14 @@
                   <tr>
                     <td colspan="7"></td>
                     <td colspan="1" style="text-align: right;"><strong>TOTAL :</strong></td>
-                    <td style="text-align: center;"><strong>{{ number_format(($totalearnperiod + $modcoltotalrow) - ($totallate + $totalabsences),2)}}</strong></td>
-                    <td style="text-align: center;"><strong >{{ number_format(($totalearnperiod + $modcoltotalrow) - ($totallate + $totalabsences) - ($totalalldeduction) + ($totalalldeduction),2) }}</strong>
+                    <td style="text-align: center;">
+                      <strong>
+                       {{ number_format(array_sum($grandtotalearnperiod) + $totalSumRef, 2); }}
+                      </strong></td>
+                    <td style="text-align: center;">
+                      <strong>
+                       {{ number_format(array_sum($grandtotalearnperiod) + $totalSumRef, 2); }}
+                      </strong>
                     </td>
                     <td colspan="6"></td>
                   </tr>

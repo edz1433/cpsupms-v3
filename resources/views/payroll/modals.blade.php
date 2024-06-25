@@ -869,7 +869,7 @@
                                     </div>
                                 </div>
                                 @endif
-                                @if($statID == 3 || $statID == 4)
+                                @if($statID == 2 || $statID == 3 || $statID == 4)
                                     <h4 class="pt-2"><strong>OTHER DEDUCTIONS</strong></h4>
                                     <div class="form-row">
                                 @endif

@@ -748,8 +748,8 @@ class PayrollController extends Controller
                 $join->on('employees.emp_dept', '=', 'of.id')
                      ->orderBy('of.orders'); 
             })
-            ->leftJoinSub(function ($query) {
-                $query->from('modify_partime_jos')
+            ->leftJoinSub(function ($query) use ($modtable) {
+                $query->from($modtable)
                     ->select('payroll_id', 
                         DB::raw('SUM(CASE WHEN action = "Additionals" AND `column` = "column1" THEN amount END) as rowcolamountref1'),
                         DB::raw('SUM(CASE WHEN action = "Additionals" AND `column` = "column2" THEN amount END) as rowcolamountref2'),
@@ -826,7 +826,7 @@ class PayrollController extends Controller
               
                 $viewTemplate = 'payroll.pdf_payrollform_partime_jo';
               
-                $pdf = \PDF::loadView($viewTemplate, compact('datas', 'finalCond', 'fulldate', 'firstHalf', 'secondHalf', 'code', 'modify', 'modify1', 'pid', 'offid', 'office', 'campusname', 'numdays', 'dateStartM', 'tablemodifyRef', 'tablemodifyDed'))->setPaper($customPaper, 'landscape');
+                $pdf = \PDF::loadView($viewTemplate, compact('datas', 'finalCond', 'fulldate', 'firstHalf', 'secondHalf', 'code', 'modify', 'modify1', 'pid', 'offid', 'payroll', 'office', 'campusname', 'numdays', 'dateStartM', 'tablemodifyRef', 'tablemodifyDed'))->setPaper($customPaper, 'landscape');
             
             }
             else{
@@ -836,7 +836,7 @@ class PayrollController extends Controller
                 //     return redirect()->back()->with('error', 'Select Office/Department');
                 // }
 
-                $pdf = \PDF::loadView($viewTemplate, compact('datas', 'firstHalf', 'secondHalf', 'code', 'modify1', 'pid', 'offid', 'campusname', 'numdays', 'payroll'))->setPaper($customPaper, 'landscape');
+                $pdf = \PDF::loadView($viewTemplate, compact('datas', 'firstHalf', 'secondHalf', 'code', 'modify1', 'pid', 'offid', 'campusname', 'numdays', 'payroll', 'tablemodifyRef', 'tablemodifyDed'))->setPaper($customPaper, 'landscape');
 
                 $pdf->setOption('margin-top', 0);
                 $pdf->setOption('margin-right', 0);
