@@ -77,6 +77,9 @@
   <body>
     <body>
       <div class="container">
+        <div style="float-rigt" style="font-size: 10px;">
+          FORM #: {{ $payroll->form_num }}
+        </div>
         <div class="row">
           <div class="col">
             <div class="table-responsive">
@@ -109,15 +112,16 @@
               <table class="table table-striped table-bordered landscape-table" style="table-layout: auto; width: 100%; max-width: none;">
                 <thead>
                   <tr>
-                    <th colspan="{{ 12 + array_sum($modifyth) + array_sum($modifythded) + ($sumjosss > 0 ? 1 : 0) + ($sumjosmlfloan > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0) + ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="border-bottom: none;">CENTRAL PHILIPPINES STAT UNIVERSITY<br>GENERAL PAYROLL<br><br>{{$pid == 1 ? $firstHalf : $secondHalf}}</th>
+                    <th colspan="{{ 13 + array_sum($modifyth) + array_sum($modifythded) + ($sumjosss > 0 ? 1 : 0) + ($sumjosmlfloan > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0) + ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="border-bottom: none;">GENERAL PAYROLL<br>CENTRAL PHILIPPINES STATE UNIVERSITY<br><br>For the period {{$pid == 1 ? $firstHalf : $secondHalf}}</th>
                   </tr>
 				          <tr>
-                    <th colspan="{{ 12 + array_sum($modifyth) + array_sum($modifythded) + ($sumjosss > 0 ? 1 : 0) + ($sumjosmlfloan > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0) + ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="text-align: left; border-top: none;">We acknowledge receipt of the sum shown opposite our names as full compensation for services rendered for the period stated</th>
+                    <th colspan="{{ 13 + array_sum($modifyth) + array_sum($modifythded) + ($sumjosss > 0 ? 1 : 0) + ($sumjosmlfloan > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0) + ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="text-align: left; border-top: none;">We acknowledge receipt of the sum shown opposite our names as full compensation for services rendered for the period stated</th>
                   </tr>
                     <th>NO.</th>
                     <th width="100">Name</th>
                     <th width="70">Designation</th>
-                    <th>Gross Income</th>
+                    <th width="30">No. of <br> Days</th>
+                    <th>Rate</th>
                     @php
                     $columns_jo = ['Column1' => 0, 'Column2' => 0, 'Column3' => 0, 'Column4' => 0, 'Column5' => 0];
                     $columns_joded = ['Column1' => 0, 'Column2' => 0, 'Column3' => 0, 'Column4' => 0, 'Column5' => 0];
@@ -151,7 +155,7 @@
                     @endforeach                   
                     <th>Deduction <br>Absent</th>
                     <th>Deduction <br>Late</th>
-                    <th>Earned For <br>The Period</th>
+                    <th style="font-size: 10px;">Earned For <br>The Period</th>
                     <th>TAX 3%</th>
                     <th>TAX 2%</th>
                     @foreach ($columns_joded as $column => $total)
@@ -173,7 +177,7 @@
                     @if($sumnscampc > 0)<th width="5%">NSCA MPC</th>@endif
                     @if($sumgradscl > 0)<th width="5%">Graduate School</th>@endif
                     <th>Total<br>Deductions</th>
-                    <th>Net<br>Ammount<br>Received</th>
+                    <th style="font-size: 10px;">Net Ammount<br>Received</th>
                     <th>Signature</th>
                 </tr>
                 </thead>
@@ -246,9 +250,10 @@
                     @endphp
                     <tr>
                       <td style="text-align: center">{{ $no++ }}</td>
-                      <td>{{ ucwords(strtolower($data->lname)) }} {{ ucwords(strtolower($data->fname)) }}                      </td>
+                      <td>{{ ucwords(strtolower($data->lname)) }} {{ ucwords(strtolower($data->fname)) }}</td>
                       <td>{{ ($data->emp_pos == "Unknown" || $data->emp_pos == "") ? 'Job Order' :  $data->emp_pos }}</td>
-                      <td>{{ number_format($grossincome, 2) }}</td>
+                      <td style="text-align: center;">{{ $data->number_hours }}</td>
+                      <td>{{ number_format($grossincome / $data->number_hours, 2) }}</td>
                       @php
                         $totaljoAdd = 0; 
                         $totaljoDed = 0; 
@@ -319,6 +324,7 @@
                 <tfoot>
                   <tr>
                     <td colspan="3"></td>
+                    <td></td>
                     <td><strong>{{ number_format($totalgrossincome,2) }}</strong></td>
                     @php $modcoltotalrow = 0; $modcoltotalrowded = 0; @endphp
                     @if(isset($modcoltotal))
@@ -384,7 +390,8 @@
                     <td>
                       <span style="width:100%; text-align: left; float: right;">
                         {{ $code->wages_code }} Labor and Wages<br>
-                        {{ $code->bir_code }} Due to BIR<br>
+                        {{ $code->bir_code }} Due to BIR (3%)<br>
+                        {{ $code->bir_code }} Due to BIR (2%)<br>
                         @if($sumjosss > 0) {{ $code->otherpayable_code }} Other Payables (SSS) <br>@endif
                         @if($sumjosmlfloan > 0){{ $code->otherpayable_code }} Other Payables (SMLF Loan) <br>@endif
                         @if($sumprojects > 0){{ $code->otherpayable_code }} Other Payables (Project) <br>@endif
@@ -401,7 +408,8 @@
                       </td>
                       <td>
                         <span style="width:100%; text-align: right; float: left;"><br>
-                          {{ number_format($totaltax1 + $totaltax2,2)}}<br>
+                          {{ number_format($totaltax1,2)}}<br>
+                          {{ number_format($totaltax2,2)}}<br>
                           @if($sumjosss > 0) {{ number_format($sumjosss, 2) }}<br>@endif
                           @if($sumjosmlfloan > 0) {{ number_format($sumjosmlfloan, 2) }}<br>@endif
                           @if($sumprojects > 0) {{ number_format($sumprojects, 2) }}<br>@endif
