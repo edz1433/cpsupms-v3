@@ -170,7 +170,7 @@
               <table class="table table-striped table-bordered landscape-table" style="table-layout: auto; width: 100%; max-width: none;">
                 <thead>
                   <tr>
-                    <th colspan="{{ 13 + $modifythRefcount + $modifythDedcount + ($sumjosss > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0)+ ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="border-bottom: none;"><strong style="font-size: 12px;">CENTRAL PHILIPPINES STATE UNIVERSITY</strong><br>GENERAL PAYROLL<br><br><strong>{{ $officeAbbr }}</strong><br>{{$pid == 1 ? $firstHalf : $secondHalf}}</th>
+                    <th colspan="{{ 13 + $modifythRefcount + $modifythDedcount + ($sumjosss > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0)+ ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="border-bottom: none;"><strong style="font-size: 12px;">CENTRAL PHILIPPINES STATE UNIVERSITY</strong><br>GENERAL PAYROLL<br><br><strong>{{ $officeAbbr }}</strong><br>{{$firstHalf}}</th>
                   </tr>
 				          <tr>
                     <th colspan="{{ 13 + $modifythRefcount + $modifythDedcount + ($sumjosss > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0)+ ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0)}}" style="text-align: left; border-top: none;">We acknowledge receipt of the sum shown opposite our names as full compensation for services rendered for the period stated</th>
@@ -297,7 +297,7 @@
                       <td style="text-align: center">{{ $no++ }}</td>
                       <td>{{ ucwords(strtolower($data->lname)) }} {{ ucwords(strtolower($data->fname)) }}</td>
                       <td>{{ $data->emp_pos }}</td>
-                      <td></td>
+                      <td>{{ number_format($data->emp_salary, 2) }}</td>
                       <td>{{ number_format($data->number_hours, 2) }}</td>
                       <td>{{ number_format($salary, 2) }}</td>
 

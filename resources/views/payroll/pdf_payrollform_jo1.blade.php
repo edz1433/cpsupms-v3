@@ -112,7 +112,7 @@
               <table class="table table-striped table-bordered landscape-table" style="table-layout: auto; width: 100%; max-width: none;">
                 <thead>
                   <tr>
-                    <th colspan="{{ 13 + array_sum($modifyth) + array_sum($modifythded) + ($sumjosss > 0 ? 1 : 0) + ($sumjosmlfloan > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0) + ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="border-bottom: none;">GENERAL PAYROLL<br>CENTRAL PHILIPPINES STATE UNIVERSITY<br><br>For the period {{$pid == 1 ? $firstHalf : $secondHalf}}</th>
+                    <th colspan="{{ 13 + array_sum($modifyth) + array_sum($modifythded) + ($sumjosss > 0 ? 1 : 0) + ($sumjosmlfloan > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0) + ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="border-bottom: none;">GENERAL PAYROLL<br>CENTRAL PHILIPPINES STATE UNIVERSITY<br><br>For the period {{ $firstHalf }}</th>
                   </tr>
 				          <tr>
                     <th colspan="{{ 13 + array_sum($modifyth) + array_sum($modifythded) + ($sumjosss > 0 ? 1 : 0) + ($sumjosmlfloan > 0 ? 1 : 0) + ($sumprojects > 0 ? 1 : 0) + ($sumnscampc > 0 ? 1 : 0) + ($sumgradscl > 0 ? 1 : 0) }}" style="text-align: left; border-top: none;">We acknowledge receipt of the sum shown opposite our names as full compensation for services rendered for the period stated</th>
