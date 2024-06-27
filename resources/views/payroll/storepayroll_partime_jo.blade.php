@@ -79,17 +79,17 @@ th{
 
                         </div>
                         <div class="col-3">
-                            <div class="input-group">
-                                <select class="form-control select2" name="offid" onchange="navigateToPage(this.value)" required>
-                                    <option value="All">All</option>
-                                    @foreach($office as $off)
-                                        <option value="{{ $off->id }}" @if($off->id == $offID) selected @endif>{{ $off->office_name }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="input-group-append">
-                                    <span class="input-group-text"><i class="fas fa-filter"></i></span>
-                                </div>
-                            </div>      
+                            <form action="" method="GET">
+                                <div class="input-group">
+                                        <select class="form-control select2" name="s" onchange="this.form.submit()" required>
+                                            <option value="1" @if(request('s') == 1) selected @endif>Complete</option>
+                                            <option value="2" @if(request('s') == 2) selected @endif>Complete (late)</option>
+                                        </select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fas fa-filter"></i></span>
+                                    </div>
+                                </div>    
+                            </form>
                         </div>                                        
                         
                         @php
@@ -161,6 +161,7 @@ th{
                                                 <th>Earn for period</th>
                                                 <th>Total Ded.</th>
                                                 <th>Net amount</th>
+                                                <th class="text-center">Status</th>
                                                 <th width="7%">Action</th>
                                             </tr>
                                     </thead>
@@ -210,6 +211,8 @@ th{
                                           $totalprojects += $projects;
                                           $totalgrad_guarantor += $grad_guarantor;
 
+                                          $pstatus = $data->status;
+
                                           @endphp
                                           <tr class="tr-data tr-{{ $data->pid }}">
                                             <td style="text-align: center">{{ $no++ }}</td>
@@ -244,6 +247,18 @@ th{
                                             <td>{{ number_format(($earnperiod + $totaljoAdd) - ($absent + $late), 2) }}</td>
                                             <td>{{ number_format($totaldeduction, 2) }}</td>
                                             <td>{{ number_format(($earnperiod + $totaljoAdd) - ($absent + $late) - $totaldeduction, 2) }}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button type="button" style="height:32px; width: 140px;" class="btn btn-{{$pstatus == 1 ? 'success' : '' }}{{$pstatus == 2 ? 'warning' : '' }} dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                        {{$pstatus == 1 ? 'Complete' : '' }}
+                                                        {{$pstatus == 2 ? 'Complete (late)' : '' }}
+                                                    </button>                                          
+                                                    <div class="dropdown-menu" x-out-of-boundaries="" style="">
+                                                        <a href="{{ route('statUpdate', ['id' => $data->pid, 'val' => '1']) }}" class="dropdown-item bg-success p-2 mt-1">Complete </a>
+                                                        <a href="{{ route('statUpdate', ['id' => $data->pid, 'val' => '2']) }}" class="dropdown-item bg-warning p-2 mt-1">Complete (late)</a>
+                                                    </div>                                                        
+                                                </div> 
+                                            </td>
                                             <td>
                                                 <div class="btn-group">
                                                     <button type="button" style="height:32px;" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="deductions">
@@ -315,13 +330,15 @@ th{
                         $totalmodjoTotalAmount = 0;  
                         $no = 1;
                         @endphp
-                        @foreach ($modify1 as $mody)
-                            @if ($mody->pay_id == $data->payroll_ID && $mody->action == 'Additionals' && array_key_exists($mody->column, $columns_jo))
-                                @php
-                                    $columns_jo[$mody->column] += $mody->amount;
-                                @endphp
-                            @endif
-                        @endforeach
+                        @if(isset($data))
+                            @foreach ($modify1 as $mody)
+                                @if ($mody->pay_id == $data->payroll_ID && $mody->action == 'Additionals' && array_key_exists($mody->column, $columns_jo))
+                                    @php
+                                        $columns_jo[$mody->column] += $mody->amount;
+                                    @endphp
+                                @endif
+                            @endforeach
+                        @endif
                         <table class="styled-table">
                             <thead>
                                 <tr>
@@ -329,25 +346,29 @@ th{
                                     <th></th>
                                 </tr>
                                 <tr>
-                                    @foreach ($modify1 as $mody)
-                                        @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_jo))
-                                            <td>{{ $mody->label }}</td>
-                                        @endif
-                                    @endforeach
+                                    @if(isset($data))
+                                        @foreach ($modify1 as $mody)
+                                            @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_jo))
+                                                <td>{{ $mody->label }}</td>
+                                            @endif
+                                        @endforeach
+                                    @endif
                                     <th class="text-center">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                @foreach ($modify1 as $mody)
-                                    @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_jo))
-                                        @php
-                                            $modjoTotalAmount = $columns_jo[$mody->column];
-                                            $totalmodjoTotalAmount += $modjoTotalAmount;
-                                        @endphp
-                                        <td>{{ number_format($modjoTotalAmount, 2) }}</td>
-                                    @endif
-                                @endforeach
+                                @if(isset($data))
+                                    @foreach ($modify1 as $mody)
+                                        @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_jo))
+                                            @php
+                                                $modjoTotalAmount = $columns_jo[$mody->column];
+                                                $totalmodjoTotalAmount += $modjoTotalAmount;
+                                            @endphp
+                                            <td>{{ number_format($modjoTotalAmount, 2) }}</td>
+                                        @endif
+                                    @endforeach
+                                @endif
                                     <td style="text-align: center;" class="text-danger">{{ number_format($totalmodjoTotalAmount, 2) }}</td>
                                 </tr>
                             </tbody>

@@ -85,18 +85,18 @@ th{
 
                         </div>
                         <div class="col-3">
-                            <div class="input-group">
-                                <select class="form-control select2" name="offid" onchange="navigateToPage(this.value)" required>
-                                    <option value="All">All</option>
-                                    @foreach($office as $off)
-                                        <option value="{{ $off->id }}" @if($off->id == $offID) selected @endif>{{ $off->office_name }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="input-group-append">
-                                    <span class="input-group-text"><i class="fas fa-filter"></i></span>
-                                </div>
-                            </div>      
-                        </div>                                        
+                            <form action="" method="GET">
+                                <div class="input-group">
+                                        <select class="form-control select2" name="s" onchange="this.form.submit()" required>
+                                            <option value="1" @if(request('s') == 1) selected @endif>Complete</option>
+                                            <option value="2" @if(request('s') == 2) selected @endif>Complete (late)</option>
+                                        </select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fas fa-filter"></i></span>
+                                    </div>
+                                </div>    
+                            </form>
+                        </div>                                      
                         
                         @php
                         $modifyth = array_fill_keys(['Column1', 'Column2', 'Column3', 'Column4', 'Column5'], 0);
@@ -186,6 +186,7 @@ th{
                                                 @endforeach 
                                                 <th>Total Ded.</th>
                                                 <th>Net amount</th>
+                                                <th class="text-center">Status</th>
                                                 <th width="7%">Action</th>
                                             </tr>
                                     </thead>
@@ -234,6 +235,8 @@ th{
                                           $totalnsca_mpc += $nsca_mpc;
                                           $totalprojects += $projects;
                                           $totalgrad_guarantor += $grad_guarantor;
+
+                                          $pstatus = $data->status;
 
                                           @endphp
                                           <tr class="tr-data tr-{{ $data->pid }}">
@@ -286,6 +289,18 @@ th{
                                             @endforeach
                                             <td>{{ number_format($totaldeduction + $totalfulDed, 2) }}</td>
                                             <td>{{ number_format(($earnperiod + $totaljoAdd) - ($absent + $late) - ($totalfulDed + $totaldeduction), 2) }}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <button type="button" style="height:32px; width: 140px;" class="btn btn-{{$pstatus == 1 ? 'success' : '' }}{{$pstatus == 2 ? 'warning' : '' }} dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                        {{$pstatus == 1 ? 'Complete' : '' }}
+                                                        {{$pstatus == 2 ? 'Complete (late)' : '' }}
+                                                    </button>                                          
+                                                    <div class="dropdown-menu" x-out-of-boundaries="" style="">
+                                                        <a href="{{ route('statUpdate', ['id' => $data->pid, 'val' => '1']) }}" class="dropdown-item bg-success p-2 mt-1">Complete </a>
+                                                        <a href="{{ route('statUpdate', ['id' => $data->pid, 'val' => '2']) }}" class="dropdown-item bg-warning p-2 mt-1">Complete (late)</a>
+                                                    </div>                                                        
+                                                </div> 
+                                            </td>
                                             <td>
                                                 <div class="btn-group">
                                                     <button type="button" style="height:32px;" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="deductions">
@@ -376,11 +391,13 @@ th{
                         <table class="styled-table">
                             <thead>
                                 <tr>
-                                    @foreach ($modify1 as $mody)
-                                        @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_fullltime_add))
-                                            <th colspan="2" class="text-center">{{ $mody->label }}</th>
-                                        @endif
-                                    @endforeach
+                                    @if(isset($data))
+                                        @foreach ($modify1 as $mody)
+                                            @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_fullltime_add))
+                                                <th colspan="2" class="text-center">{{ $mody->label }}</th>
+                                            @endif
+                                        @endforeach
+                                    @endif
                                     <th colspan="2" class="text-center" width="15%">TOTAL</th>
                                 </tr>
                                 <tr>
@@ -400,24 +417,26 @@ th{
                             </thead>
                             <tbody>
                                 <tr>
-                                    @foreach ($modify1 as $mody)
-                                        @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_fullltime_add))
-                                            @php
-                                                $modfulTotalAmount = $columns_fullltime_add[$mody->column];
-                                                $totalmodfulTotalAmount += $modfulTotalAmount;
-                                            @endphp
-                                            <td class="text-center">{{ number_format($modfulTotalAmount, 2) }}</td>
-                                        @endif
-                                    @endforeach
-                                    @foreach ($modify1 as $mody)
-                                        @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_fullltime_ded))
-                                            @php
-                                                $modfulTotalAmountded = $columns_fullltime_ded[$mody->column];
-                                                $totalmodfulTotalAmountded += $modfulTotalAmountded;
-                                            @endphp
-                                            <td class="text-center">{{ number_format($modfulTotalAmountded, 2) }}</td>
-                                        @endif
-                                    @endforeach
+                                    @if(isset($data))
+                                        @foreach ($modify1 as $mody)
+                                            @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_fullltime_add))
+                                                @php
+                                                    $modfulTotalAmount = $columns_fullltime_add[$mody->column];
+                                                    $totalmodfulTotalAmount += $modfulTotalAmount;
+                                                @endphp
+                                                <td class="text-center">{{ number_format($modfulTotalAmount, 2) }}</td>
+                                            @endif
+                                        @endforeach
+                                        @foreach ($modify1 as $mody)
+                                            @if ($mody->payroll_id == $data->pid && array_key_exists($mody->column, $columns_fullltime_ded))
+                                                @php
+                                                    $modfulTotalAmountded = $columns_fullltime_ded[$mody->column];
+                                                    $totalmodfulTotalAmountded += $modfulTotalAmountded;
+                                                @endphp
+                                                <td class="text-center">{{ number_format($modfulTotalAmountded, 2) }}</td>
+                                            @endif
+                                        @endforeach
+                                    @endif
                                     <td class="text-danger">{{ $totalmodfulTotalAmount }}</td>
                                     <td class="text-danger">{{ $totalmodfulTotalAmountded }}</td>
                                 </tr>
