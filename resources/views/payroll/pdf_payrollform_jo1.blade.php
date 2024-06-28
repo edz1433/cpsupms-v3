@@ -260,7 +260,7 @@
                       @endphp
                       
                       @foreach ($modify1 as $mody)
-                          @if ($mody->pay_id == $data->payroll_ID && $mody->action == 'Additionals' && array_key_exists($mody->column, $columns_jo))
+                          @if($mody->pay_id == $data->payroll_ID && $mody->action == 'Additionals' && array_key_exists($mody->column, $columns_jo))
                               @php
                                   $columns_jo[$mody->column] += $mody->amount;
                               @endphp

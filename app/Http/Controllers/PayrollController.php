@@ -355,14 +355,18 @@ class PayrollController extends Controller
         
         if ($statID == 3) {
             $employee = Employee::where('camp_id', $campId)
-                ->where(function ($query) {
-                    $query->where('emp_status', 3)
-                        ->orWhere(function ($query) {
-                            $query->where('emp_status', 4)
-                                ->where('partime_rate', '!=', 0);
-                        });
-                })
-                ->get();
+            ->where(function ($query) {
+                $query->where('emp_status', 3)
+                    ->orWhere(function ($query) {
+                        $query->where('emp_status', 4)
+                            ->where('partime_rate', '!=', 0);
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('emp_status', 1)
+                            ->where('partime_rate', '!=', 0);
+                    });
+            })
+            ->get();
         }
         
         elseif($statID == 4){

@@ -66,7 +66,7 @@
                                                 <td>{{ number_format($emp->partime_rate, 2) }}</td>
                                                 <td>
                                                     <div class='d-flex align-items-center'>
-                                                        <input id="{{ $emp->empid }}" type='checkbox' class='form-control form-control-sm checkbox-partime ' title='part-time' @if($emp->emp_status != 4)disabled @elseif($emp->emp_status==4 && $emp->partime_rate>0) checked @else  @endif> 
+                                                        <input id="{{ $emp->empid }}" type='checkbox' class='form-control form-control-sm checkbox-partime ' title='part-time' @if($emp->emp_status != 4 && $emp->emp_status != 1)disabled @elseif(($emp->emp_status==4 || $emp->emp_status==1) && $emp->partime_rate>0) checked @else  @endif> 
                                                         <button class='btn btn-info btn-sm employee_edit mr-1' style='width: 50px;' value="{{ $emp->empid }}">
                                                             <i class='fas fa-exclamation-circle'></i>
                                                         </button>
